@@ -55,4 +55,8 @@ jobs:
       - name: Package project
         working-directory: python
         run: make package
-      # TODO store the artifact
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ingestbot.zip
+          path: python/.build/ingestbot.zip
