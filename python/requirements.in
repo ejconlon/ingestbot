@@ -1,0 +1,4 @@
+aws-wsgi
+awscli
+flask
+gunicorn
