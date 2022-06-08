@@ -3,6 +3,12 @@ on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
+    container:
+      # Use latest release in the 3.9 series (max supported by AWS lambda)
+      # NOTE: Cannot use template vars here
+      image: python:3.9.13
+      # NOTE: Only works well if you use the UID for the runner user
+      options: --user 1001
     steps:
       - name: Checkout
         uses: actions/checkout@v3
