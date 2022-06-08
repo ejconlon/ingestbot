@@ -43,7 +43,7 @@ jobs:
     steps:
       # NOTE: `make package` requires zip utilities, which aren't in the python image
       - name: Install utils
-        run: su -m root 'apt-get install -y unzip zip'
+        run: apt-get update && apt-get install -y unzip zip
       - name: Checkout
         uses: actions/checkout@v3
       - name: Cache pipcache
