@@ -27,8 +27,8 @@ venvclean:
 .PHONY: venv
 venv:
 	python3 -m venv --upgrade-deps .venv
-	.venv/bin/python3 -m pip install wheel
-	.venv/bin/python3 -m pip install -r dev-requirements.txt
+	.venv/bin/python3 -m pip --cache-dir .pipcache install wheel
+	.venv/bin/python3 -m pip --cache-dir .pipcache install -r dev-requirements.txt
 
 # Typecheck with mypy
 .PHONY: typecheck
@@ -54,3 +54,24 @@ test: lint typecheck unit
 .PHONY: run
 run:
 	.venv/bin/python3 -m ingestbot.main
+
+# Package the application
+.PHONY: package
+package:
+	rm -rf .build
+	mkdir .build
+	cd .build && python3 -m pip --cache-dir ../.pipcache install -t ingestbot -r ../requirements.txt
+	cp -r ingestbot .build/ingestbot
+	cp entrypoint.sh .build/ingestbot
+	cd .build && zip -rq ingestbot.zip ingestbot
+	cd .build && unzip -l ingestbot.zip
+
+# Run the packaged application
+.PHONY: runpackage
+runpackage:
+	.build/ingestbot/entrypoint.sh
+
+# Clean most generated files
+.PHONY: clean
+clean: venvclean
+	rm -rf .mypy_cache .pytest_cache .pipcache .build

@@ -1,6 +1,7 @@
 name: python
 on: [push]
 jobs:
+  # Test the project
   test:
     runs-on: ubuntu-latest
     container:
@@ -12,6 +13,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Cache pipcache
+        uses: actions/cache@v3
+        with:
+          path: python/.pipcache
+          key: ${{ runner.os }}-pipcache-${{ hashFiles('python/dev-requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pipcache-
       - name: Cache venv
         uses: actions/cache@v3
         with:
@@ -23,3 +31,24 @@ jobs:
       - name: Test project
         working-directory: python
         run: make test
+  # If the test succeeds, build and store the artifact
+  artifact:
+    needs: test
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.9.13
+      options: --user 1001
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cache pipcache
+        uses: actions/cache@v3
+        with:
+          path: python/.pipcache
+          key: ${{ runner.os }}-pipcache-${{ hashFiles('python/dev-requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pipcache-
+      - name: Package project
+        working-directory: python
+        run: make package
+      # TODO store the artifact
