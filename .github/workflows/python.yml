@@ -31,7 +31,6 @@ jobs:
         run: make test
   # If the test succeeds, build and store the artifact
   artifact:
-    TODO re-enable
     needs: test
     runs-on: ubuntu-latest
     container:
