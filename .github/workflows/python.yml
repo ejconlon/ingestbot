@@ -58,5 +58,5 @@ jobs:
       - name: Upload package artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ingestbot.zip.zip
+          name: ingestbot.zip
           path: python/.build/ingestbot.zip
