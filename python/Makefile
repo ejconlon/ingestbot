@@ -39,11 +39,17 @@ typecheck:
 lint:
 	.venv/bin/python3 -m flake8 ingestbot
 
-# Test with pytest - TODO add some tests!
-.PHONY: test
-test:
+# Unit test with pytest - TODO add some tests!
+.PHONY: unit
+unit:
 	.venv/bin/python3 -m pytest .
 
+# Run all tests
+.PHONY: test
+test: lint typecheck unit
+
+# Run the server locally with the default args.
+# Copy the command and run it in bash to pass custom args.
 .PHONY: run
 run:
 	.venv/bin/python3 -m ingestbot.main
