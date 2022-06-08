@@ -39,6 +39,8 @@ jobs:
       image: python:3.9.13
       options: --user 1001
     steps:
+      - name: Install utils
+        run: sudo apt-get install -y unzip zip
       - name: Checkout
         uses: actions/checkout@v3
       - name: Cache pipcache
