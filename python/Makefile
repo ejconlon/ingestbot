@@ -1,5 +1,6 @@
 # All common build tasks can be invoked by targets here.
 # For example, to setup the virtual environment, use `make venv`.
+# Then `make test` to lint, typecheck, and unit test.
 
 # Install system-level dependencies necessary to build the project
 .PHONY: deps
