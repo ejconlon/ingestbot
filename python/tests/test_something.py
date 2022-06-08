@@ -1,0 +1,3 @@
+# Surely you can think of a better test than this...
+def test_something():
+    assert 1 + 1 == 2

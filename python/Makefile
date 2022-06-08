@@ -43,7 +43,7 @@ lint:
 # Unit test with pytest - TODO add some tests!
 .PHONY: unit
 unit:
-	.venv/bin/python3 -m pytest .
+	.venv/bin/python3 -m pytest tests
 
 # Run all tests
 .PHONY: test
