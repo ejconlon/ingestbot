@@ -43,3 +43,7 @@ lint:
 .PHONY: test
 test:
 	.venv/bin/python3 -m pytest .
+
+.PHONY: run
+run:
+	.venv/bin/python3 -m ingestbot.main
