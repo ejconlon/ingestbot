@@ -63,7 +63,8 @@ package:
 	cd .build && python3 -m pip --cache-dir ../.pipcache install -t ingestbot -r ../requirements.txt
 	cp -r ingestbot .build/ingestbot
 	cp entrypoint.sh .build/ingestbot
-	cd .build && ls -las ingestbot
+	cd .build && zip -rq ingestbot.zip ingestbot
+	cd .build && unzip -l ingestbot.zip
 
 # Run the packaged application
 .PHONY: runpackage
