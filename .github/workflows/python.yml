@@ -39,8 +39,9 @@ jobs:
       image: python:3.9.13
       options: --user 1001
     steps:
+      # NOTE: `make package` requires zip utilities, which aren't in the python image
       - name: Install utils
-        run: sudo apt-get install -y unzip zip
+        run: apt-get install -y unzip zip
       - name: Checkout
         uses: actions/checkout@v3
       - name: Cache pipcache
