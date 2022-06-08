@@ -1,41 +1,38 @@
 name: python
 on: [push]
 jobs:
-  # TODO re-enable
-  # # Test the project
-  # test:
-  #   runs-on: ubuntu-latest
-  #   container:
-  #     # Use latest release in the 3.9 series (max supported by AWS lambda)
-  #     # NOTE: Cannot use template vars here
-  #     image: python:3.9.13
-  #     # NOTE: Only works well if you use the UID for the runner user
-  #     options: --user 1001
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-  #     - name: Cache pipcache
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: python/.pipcache
-  #         key: ${{ runner.os }}-pipcache-${{ hashFiles('python/dev-requirements.txt') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-pipcache-
-  #     - name: Cache venv
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: python/.venv
-  #         key: ${{ runner.os }}-venv-${{ hashFiles('python/dev-requirements.txt') }}
-  #     - name: Ensure venv
-  #       working-directory: python
-  #       run: test -d .venv || make venv
-  #     - name: Test project
-  #       working-directory: python
-  #       run: make test
+  # Test the project
+  test:
+    runs-on: ubuntu-latest
+    container:
+      # Use latest release in the 3.9 series (max supported by AWS lambda)
+      # NOTE: Cannot use template vars here
+      image: python:3.9.13
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cache pipcache
+        uses: actions/cache@v3
+        with:
+          path: python/.pipcache
+          key: ${{ runner.os }}-pipcache-${{ hashFiles('python/dev-requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pipcache-
+      - name: Cache venv
+        uses: actions/cache@v3
+        with:
+          path: python/.venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('python/dev-requirements.txt') }}
+      - name: Ensure venv
+        working-directory: python
+        run: test -d .venv || make venv
+      - name: Test project
+        working-directory: python
+        run: make test
   # If the test succeeds, build and store the artifact
   artifact:
-    # TODO re-enable
-    # needs: test
+    TODO re-enable
+    needs: test
     runs-on: ubuntu-latest
     container:
       image: python:3.9.13
