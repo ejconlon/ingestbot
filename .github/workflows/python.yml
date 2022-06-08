@@ -39,7 +39,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: python:3.9.13
-      options: --user 1001
     steps:
       # NOTE: `make package` requires zip utilities, which aren't in the python image
       - name: Install utils
