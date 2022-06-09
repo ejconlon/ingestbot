@@ -2,12 +2,12 @@
 
 # Entrypoint for the packaged application:
 #
-#     unzip ingestbot.zip
-#     ingestbot/entrypoint.sh --log-level debug
+#     unzip __PACKAGE_NAME__.zip
+#     __PACKAGE_NAME__/entrypoint.sh --log-level debug
 
 set -eux
 
-PACKAGE="ingestbot"
+PACKAGE_NAME="__PACKAGE_NAME__"
 RUN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 pushd ${RUN_DIR}
@@ -18,8 +18,8 @@ pushd ${RUN_DIR}
   fi
 
   if [ -d ${PACKAGE}/bin ]; then
-    export PATH="${RUN_DIR}/${PACKAGE}/bin:${PATH}"
+    export PATH="${RUN_DIR}/${PACKAGE_NAME}/bin:${PATH}"
   fi
 
-  python3 -m ${PACKAGE}.main $@
+  python3 -m ${PACKAGE_NAME}.main $@
 popd

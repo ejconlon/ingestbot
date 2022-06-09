@@ -1,4 +1,13 @@
-/.vscode
+# Editor artifacts
+.vscode/
 *~
 *.swo
 *.swp
+
+# Python
+.build/
+.mypy_cache/
+.pipcache/
+.pytest_cache/
+.venv/
+__pycache__/

@@ -1,6 +1,11 @@
+# To use the targets defined here, define PACKAGE_NAME and include this file.
 # All common build tasks can be invoked by targets here.
 # For example, to setup the virtual environment, use `make venv`.
 # Then `make test` to lint, typecheck, and unit test.
+
+.PHONY: default
+default:
+	echo "No default target"
 
 # Install system-level dependencies necessary to build the project
 .PHONY: deps
@@ -27,18 +32,18 @@ venvclean:
 .PHONY: venv
 venv:
 	python3 -m venv --upgrade-deps .venv
-	.venv/bin/python3 -m pip --cache-dir .pipcache install wheel
-	.venv/bin/python3 -m pip --cache-dir .pipcache install -r dev-requirements.txt
+	.venv/bin/python3 -m pip --cache-dir ../../.pipcache install wheel
+	.venv/bin/python3 -m pip --cache-dir ../../.pipcache install -r dev-requirements.txt
 
 # Typecheck with mypy
 .PHONY: typecheck
 typecheck:
-	.venv/bin/python3 -m mypy -p ingestbot
+	.venv/bin/python3 -m mypy -p $(PACKAGE_NAME)
 
 # Lint with flake8
 .PHONY: lint
 lint:
-	.venv/bin/python3 -m flake8 ingestbot
+	.venv/bin/python3 -m flake8 --config=../../python/setup.cfg $(PACKAGE_NAME)
 
 # Unit test with pytest - TODO add some tests!
 .PHONY: unit
@@ -53,25 +58,27 @@ test: lint typecheck unit
 # Copy the command and run it in bash to pass custom args.
 .PHONY: run
 run:
-	.venv/bin/python3 -m ingestbot.main
+	.venv/bin/python3 -m $(PACKAGE_NAME).main
 
 # Package the application
 .PHONY: package
 package:
-	rm -rf .build
-	mkdir .build
-	cd .build && python3 -m pip --cache-dir ../.pipcache install -t ingestbot -r ../requirements.txt
-	cp -r ingestbot .build/ingestbot
-	cp entrypoint.sh .build/ingestbot
-	cd .build && zip -rq ingestbot.zip ingestbot
-	cd .build && unzip -l ingestbot.zip
+	mkdir -p ../../.build
+	cd ../../.build && rm -f $(PACKAGE_NAME).zip
+	cd ../../.build && rm -rf $(PACKAGE_NAME)
+	cd ../../.build && python3 -m pip --cache-dir ../.pipcache install -t $(PACKAGE_NAME) -r ../components/$(PACKAGE_NAME)/requirements.txt
+	cd ../../.build && cp -r ../components/$(PACKAGE_NAME)/$(PACKAGE_NAME) $(PACKAGE_NAME)
+	cd ../../.build && sed -e"s/__PACKAGE_NAME__/$(PACKAGE_NAME)/g" ../python/entrypoint.sh.tpl > $(PACKAGE_NAME)/entrypoint.sh
+	cd ../../.build && chmod +x $(PACKAGE_NAME)/entrypoint.sh
+	cd ../../.build && zip -rq $(PACKAGE_NAME).zip $(PACKAGE_NAME)
+	cd ../../.build && unzip -l $(PACKAGE_NAME).zip
 
 # Run the packaged application
 .PHONY: runpackage
 runpackage:
-	.build/ingestbot/entrypoint.sh
+	.build/$(PACKAGE_NAME)/entrypoint.sh
 
-# Clean most generated files
+# Clean most generated files (+ venv)
 .PHONY: clean
 clean: venvclean
-	rm -rf .mypy_cache .pytest_cache .pipcache .build
+	rm -rf .mypy_cache .pytest_cache
