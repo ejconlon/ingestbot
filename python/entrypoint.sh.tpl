@@ -17,7 +17,7 @@ pushd ${RUN_DIR}
     export PATH="${RUN_DIR}/bin:${PATH}"
   fi
 
-  if [ -d ${PACKAGE}/bin ]; then
+  if [ -d ${PACKAGE_NAME}/bin ]; then
     export PATH="${RUN_DIR}/${PACKAGE_NAME}/bin:${PATH}"
   fi
 

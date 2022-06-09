@@ -76,7 +76,7 @@ package:
 # Run the packaged application
 .PHONY: runpackage
 runpackage:
-	.build/$(PACKAGE_NAME)/entrypoint.sh
+	cd ../../.build && $(PACKAGE_NAME)/entrypoint.sh
 
 # Clean most generated files (+ venv)
 .PHONY: clean
