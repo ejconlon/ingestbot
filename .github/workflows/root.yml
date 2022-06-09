@@ -5,3 +5,7 @@ jobs:
     uses: ./.github/workflows/python.yml
     with:
       component_name: ingestbot_api
+  ingestbot_cdk:
+    uses: ./.github/workflows/python.yml
+    with:
+      component_name: ingestbot_cdk

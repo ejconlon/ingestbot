@@ -7,11 +7,6 @@
 default:
 	echo "No default target"
 
-# Install system-level dependencies necessary to build the project
-.PHONY: deps
-deps:
-	pip3 install pip-tools
-
 # Remove frozen dependencies for a fresh pipcompile
 .PHONY: pipclean
 pipclean:
@@ -21,7 +16,9 @@ pipclean:
 .PHONY: pipcompile
 pipcompile:
 	python3 -m piptools compile requirements.in
+	cp ../../python/dev-requirements.in ./
 	python3 -m piptools compile dev-requirements.in
+	rm dev-requirements.in
 
 # Remove the virtual environment
 .PHONY: venvclean
@@ -45,10 +42,10 @@ typecheck:
 lint:
 	.venv/bin/python3 -m flake8 --config=../../python/setup.cfg $(COMPONENT_NAME)
 
-# Unit test with pytest - TODO add some tests!
+# Unit test with pytest
 .PHONY: unit
 unit:
-	.venv/bin/python3 -m pytest tests
+	if [ -d tests ]; then .venv/bin/python3 -m pytest tests; fi
 
 # Run all tests
 .PHONY: test

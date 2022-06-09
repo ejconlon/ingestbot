@@ -1,2 +1,2 @@
-COMPONENT_NAME=ingestbot_api
+COMPONENT_NAME=ingestbot_cdk
 include ../../python/Makefile.base

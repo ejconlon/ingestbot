@@ -6,18 +6,14 @@
 #
 aws-wsgi==0.2.7
     # via -r requirements.in
-awscli==1.25.5
+boto3==1.24.5
     # via -r requirements.in
 botocore==1.27.5
     # via
-    #   awscli
+    #   boto3
     #   s3transfer
 click==8.1.3
     # via flask
-colorama==0.4.4
-    # via awscli
-docutils==0.16
-    # via awscli
 flask==2.1.2
     # via -r requirements.in
 gunicorn==20.1.0
@@ -29,19 +25,15 @@ itsdangerous==2.1.2
 jinja2==3.1.2
     # via flask
 jmespath==1.0.0
-    # via botocore
+    # via
+    #   boto3
+    #   botocore
 markupsafe==2.1.1
     # via jinja2
-pyasn1==0.4.8
-    # via rsa
 python-dateutil==2.8.2
     # via botocore
-pyyaml==5.4.1
-    # via awscli
-rsa==4.7.2
-    # via awscli
 s3transfer==0.6.0
-    # via awscli
+    # via boto3
 six==1.16.0
     # via python-dateutil
 urllib3==1.26.9
