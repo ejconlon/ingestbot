@@ -1,7 +1,7 @@
 name: root
 on: [push]
 jobs:
-  ingestion_api:
+  ingestbot_api:
     uses: ./.github/workflows/python.yml
     with:
-      component_name: ingestion_api
+      component_name: ingestbot_api
