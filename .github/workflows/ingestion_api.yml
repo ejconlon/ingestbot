@@ -4,6 +4,6 @@ jobs:
   all:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/workflows/python.yml
+      - uses: ./.github/workflows/python
         with:
           component_name: ingestion_api
