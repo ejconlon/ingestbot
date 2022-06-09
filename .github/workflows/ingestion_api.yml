@@ -1,0 +1,9 @@
+name: python
+on: [push]
+jobs:
+  all:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/workflows/python.yml
+        with:
+          component_name: ingestion_api

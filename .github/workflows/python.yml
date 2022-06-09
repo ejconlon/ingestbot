@@ -1,5 +1,10 @@
 name: python
-on: [push]
+on:
+  workflow_call:
+    inputs:
+      component_name:
+        type: string
+        required: true
 jobs:
   # Test the project
   test:
@@ -14,20 +19,18 @@ jobs:
       - name: Cache pipcache
         uses: actions/cache@v3
         with:
-          path: python/.pipcache
-          key: ${{ runner.os }}-pipcache-${{ hashFiles('python/dev-requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pipcache-
+          path: .pipcache
+          key: ${{ runner.os }}-pipcache
       - name: Cache venv
         uses: actions/cache@v3
         with:
-          path: python/.venv
-          key: ${{ runner.os }}-venv-${{ hashFiles('python/dev-requirements.txt') }}
+          path: components/${{ inputs.component_name }}.venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('components/${{ inputs.component_name }}/dev-requirements.txt') }}
       - name: Ensure venv
-        working-directory: python
+        working-directory: components/${{ inputs.component_name }}
         run: test -d .venv || make venv
       - name: Test project
-        working-directory: python
+        working-directory: components/${{ inputs.component_name }}
         run: make test
   # If the test succeeds, build and store the artifact
   artifact:
@@ -44,15 +47,13 @@ jobs:
       - name: Cache pipcache
         uses: actions/cache@v3
         with:
-          path: python/.pipcache
-          key: ${{ runner.os }}-pipcache-${{ hashFiles('python/dev-requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pipcache-
+          path: .pipcache
+          key: ${{ runner.os }}-pipcache
       - name: Package project
-        working-directory: python
+        working-directory: components/${{ inputs.component_name }}
         run: make package
       - name: Upload package artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ingestbot.zip
-          path: python/.build/ingestbot.zip
+          name: ${{ inputs.component_name }}.zip
+          path: python/.build/${{ inputs.component_name }}.zip
