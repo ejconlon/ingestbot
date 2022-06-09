@@ -2,10 +2,6 @@ name: root
 on: [push]
 jobs:
   ingestion_api:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - uses: ./.github/workflows/python
-        with:
-          component_name: ingestion_api
+    uses: ./.github/workflows/python.yml
+    with:
+      component_name: ingestion_api
