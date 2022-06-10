@@ -1,0 +1,11 @@
+# Targets for python libraries. Define COMPONENT_NAME and include this file.
+# See `Makefile.base` for more documentation.
+
+include ../../python/Makefile.base
+
+# Freeze dependencies specified in requirements files
+.PHONY: pipcompile
+pipcompile:
+	cp ../../python/dev-requirements.lib.in ./dev-requirements.in
+	python3 -m piptools compile dev-requirements.in
+	rm dev-requirements.in

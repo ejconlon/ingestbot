@@ -1,3 +1,4 @@
+-e ../ibot_prelude
 aws-wsgi
 boto3
 flask

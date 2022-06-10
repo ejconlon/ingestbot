@@ -1,6 +1,6 @@
-# To use the targets defined here, define COMPONENT_NAME and include this file.
+# Do not import this directly - use `Makefile.app` or `Makefile.lib` instead.
 # All common build tasks can be invoked by targets here.
-# For example, to setup the virtual environment, use `make venv`.
+# For example, to setup the virtual environment, use `make install`.
 # Then `make test` to lint, typecheck, and unit test.
 
 .PHONY: default
@@ -11,14 +11,6 @@ default:
 .PHONY: pipclean
 pipclean:
 	rm -f requirements.txt dev-requirements.txt
-
-# Freeze dependencies specified in requirements files
-.PHONY: pipcompile
-pipcompile:
-	python3 -m piptools compile requirements.in
-	cp ../../python/dev-requirements.in ./
-	python3 -m piptools compile dev-requirements.in
-	rm dev-requirements.in
 
 # Create the virtual environment
 .PHONY: install
@@ -51,31 +43,7 @@ unit:
 .PHONY: test
 test: lint typecheck unit
 
-# Run the server locally with the default args.
-# Copy the command and run it in bash to pass custom args.
-.PHONY: run
-run:
-	.venv/bin/python3 -m $(COMPONENT_NAME).main
-
-# Package the application
-.PHONY: package
-package:
-	mkdir -p ../../.build
-	cd ../../.build && rm -f $(COMPONENT_NAME).zip
-	cd ../../.build && rm -rf $(COMPONENT_NAME)
-	cd ../../.build && python3 -m pip --cache-dir ../.pipcache install -t $(COMPONENT_NAME) -r ../components/$(COMPONENT_NAME)/requirements.txt
-	cd ../../.build && cp -r ../components/$(COMPONENT_NAME)/$(COMPONENT_NAME) $(COMPONENT_NAME)
-	cd ../../.build && sed -e"s/__COMPONENT_NAME__/$(COMPONENT_NAME)/g" ../python/entrypoint.sh.tpl > $(COMPONENT_NAME)/entrypoint.sh
-	cd ../../.build && chmod +x $(COMPONENT_NAME)/entrypoint.sh
-	cd ../../.build && zip -rq $(COMPONENT_NAME).zip $(COMPONENT_NAME)
-	cd ../../.build && unzip -l $(COMPONENT_NAME).zip
-
-# Run the packaged application
-.PHONY: runpackage
-runpackage:
-	cd ../../.build && $(COMPONENT_NAME)/entrypoint.sh
-
 # Clean most generated files (+ venv)
 .PHONY: clean
 clean:
-	rm -rf .venv .mypy_cache .pytest_cache
+	rm -rf .venv .mypy_cache .pytest_cache *.egg-info
