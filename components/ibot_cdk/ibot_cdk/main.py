@@ -7,6 +7,7 @@ from aws_cdk import App, DefaultStackSynthesizer, Stack, StackSynthesizer
 from aws_cdk.aws_apigateway import LambdaRestApi
 from aws_cdk.aws_ec2 import Vpc
 from aws_cdk.aws_lambda import Code, Function, Runtime
+from ibot_prelude.parser import CustomArgumentParser
 
 
 @dataclass
@@ -84,8 +85,8 @@ def build_app(ctx: Context) -> App:
 
 
 def build_parser() -> ArgumentParser:
-    parser = ArgumentParser(prog='ibot_cdk')
-    parser.add_argument('--env', default='dev')
+    parser = CustomArgumentParser(prog='ibot_cdk')
+    parser.add_argument('--env', metavar='IBOT_ENV', default='dev')
     return parser
 
 

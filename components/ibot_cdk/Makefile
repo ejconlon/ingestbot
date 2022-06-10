@@ -1,5 +1,5 @@
 COMPONENT_NAME=ibot_cdk
-include ../../python/Makefile.base
+include ../../python/Makefile.app
 
 # Freeze CDK bootstrap template (infrequent)
 bootstrap-template:

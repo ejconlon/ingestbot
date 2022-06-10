@@ -1,1 +1,2 @@
+-e file:../ibot_prelude#egg=ibot_prelude
 aws-cdk-lib
