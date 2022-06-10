@@ -10,29 +10,16 @@ attrs==21.4.0
     #   cattrs
     #   jsii
     #   pytest
-aws-cdk-cloud-assembly-schema==1.159.0
-    # via
-    #   -r requirements.txt
-    #   aws-cdk-core
-    #   aws-cdk-cx-api
-aws-cdk-core==1.159.0
+aws-cdk-lib==2.27.0
     # via -r requirements.txt
-aws-cdk-cx-api==1.159.0
-    # via
-    #   -r requirements.txt
-    #   aws-cdk-core
-aws-cdk-region-info==1.159.0
-    # via
-    #   -r requirements.txt
-    #   aws-cdk-core
 cattrs==22.1.0
     # via
     #   -r requirements.txt
     #   jsii
-constructs==3.4.32
+constructs==10.1.34
     # via
     #   -r requirements.txt
-    #   aws-cdk-core
+    #   aws-cdk-lib
 exceptiongroup==1.0.0rc8
     # via
     #   -r requirements.txt
@@ -46,10 +33,7 @@ isort==5.10.1
 jsii==1.60.1
     # via
     #   -r requirements.txt
-    #   aws-cdk-cloud-assembly-schema
-    #   aws-cdk-core
-    #   aws-cdk-cx-api
-    #   aws-cdk-region-info
+    #   aws-cdk-lib
     #   constructs
 mccabe==0.6.1
     # via flake8
@@ -64,10 +48,7 @@ pluggy==1.0.0
 publication==0.0.3
     # via
     #   -r requirements.txt
-    #   aws-cdk-cloud-assembly-schema
-    #   aws-cdk-core
-    #   aws-cdk-cx-api
-    #   aws-cdk-region-info
+    #   aws-cdk-lib
     #   constructs
 py==1.11.0
     # via pytest
