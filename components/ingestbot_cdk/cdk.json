@@ -1,3 +1,0 @@
-{
-  "app": ".venv/bin/python3 -m ingestbot_cdk.main"
-}

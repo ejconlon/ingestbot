@@ -6,7 +6,7 @@ Your handler module/function should be `ingestbot.handler.handler`
 """
 
 import awsgi
-from ingestbot_api.main import build_app_from_args
+from ibot_api.main import build_app_from_args
 
 APP = build_app_from_args()
 

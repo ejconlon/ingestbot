@@ -31,17 +31,17 @@ def qualify_title(ctx: Context, name: str) -> str:
 
 
 def code(name: str) -> Code:
-    rel_path = f'../../.build/ingestbot_{name}.zip'
+    rel_path = f'../../.build/ibot_{name}.zip'
     path = os.path.abspath(rel_path)
     return Code.from_asset(path)
 
 
 def handler(name: str) -> str:
-    return f'ingestbot_{name}.handler'
+    return f'ibot_{name}.handler'
 
 
 def build_synth(ctx: Context) -> StackSynthesizer:
-    with open(f'ingestbot_cdk/bootstrap/params-{ctx.env}.json') as f:
+    with open(f'ibot_cdk/bootstrap/params-{ctx.env}.json') as f:
         params_list = json.load(f)
     params_kv = {x['ParameterKey']: x['ParameterValue'] for x in params_list}
     cdk_prefix = 'cdk'
@@ -84,7 +84,7 @@ def build_app(ctx: Context) -> App:
 
 
 def build_parser() -> ArgumentParser:
-    parser = ArgumentParser(prog='ingestbot_cdk')
+    parser = ArgumentParser(prog='ibot_cdk')
     parser.add_argument('--env', default='dev')
     return parser
 

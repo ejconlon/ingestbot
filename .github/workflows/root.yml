@@ -1,11 +1,11 @@
 name: root
 on: [push]
 jobs:
-  ingestbot_api:
-    uses: ./.github/workflows/python.yml
+  api-test:
+    uses: ./.github/workflows/python-test.yml
     with:
-      component_name: ingestbot_api
-  ingestbot_cdk:
-    uses: ./.github/workflows/python.yml
+      component_name: ibot_api
+  cdk-test:
+    uses: ./.github/workflows/python-test.yml
     with:
-      component_name: ingestbot_cdk
+      component_name: ibot_cdk

@@ -1,2 +1,2 @@
-COMPONENT_NAME=ingestbot_api
+COMPONENT_NAME=ibot_api
 include ../../python/Makefile.base

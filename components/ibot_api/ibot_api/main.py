@@ -8,8 +8,8 @@ from argparse import ArgumentParser
 from typing import Optional
 
 from flask import Flask
-from ingestbot_api.app import build_app
-from ingestbot_api.parser import parse_args_and_configure, parser_with_profile
+from ibot_api.app import build_app
+from ibot_api.parser import parse_args_and_configure, parser_with_profile
 
 
 def build_parser() -> ArgumentParser:

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Entrypoint for the packaged application:
+# Entrypoint for the packaged application. Example:
 #
 #     unzip __COMPONENT_NAME__.zip
 #     __COMPONENT_NAME__/entrypoint.sh --log-level debug
@@ -10,16 +10,16 @@ set -eux
 COMPONENT_NAME="__COMPONENT_NAME__"
 RUN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
-pushd ${RUN_DIR}
-  export PYTHONPATH="${RUN_DIR}:${PYTHONPATH:-}"
+cd ${RUN_DIR}
 
-  if [ -d bin ]; then
-    export PATH="${RUN_DIR}/bin:${PATH}"
-  fi
+export PYTHONPATH="${RUN_DIR}:${PYTHONPATH:-}"
 
-  if [ -d ${COMPONENT_NAME}/bin ]; then
-    export PATH="${RUN_DIR}/${COMPONENT_NAME}/bin:${PATH}"
-  fi
+if [ -d bin ]; then
+  export PATH="${RUN_DIR}/bin:${PATH}"
+fi
 
-  python3 -m ${COMPONENT_NAME}.main $@
-popd
+if [ -d ${COMPONENT_NAME}/bin ]; then
+  export PATH="${RUN_DIR}/${COMPONENT_NAME}/bin:${PATH}"
+fi
+
+exec python3 -m ${COMPONENT_NAME}.main $@
