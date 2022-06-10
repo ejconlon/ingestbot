@@ -1,6 +1,10 @@
 name: root
 on: [push]
 jobs:
+  prelude-test:
+    uses: ./.github/workflows/python-test.yml
+    with:
+      component_name: ibot_prelude
   api-test:
     uses: ./.github/workflows/python-test.yml
     with:

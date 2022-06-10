@@ -9,11 +9,11 @@ from typing import Optional
 
 from flask import Flask
 from ibot_api.app import build_app
-from ibot_api.parser import parse_args_and_configure, parser_with_profile
+from ibot_prelude.parser import parse_args_and_configure, parser_with_profile
 
 
 def build_parser() -> ArgumentParser:
-    parser = parser_with_profile(prog='ingestbot')
+    parser = parser_with_profile(prog='ibot_api')
     parser.add_argument(
         '--default-name',
         default='traveler',
@@ -30,7 +30,7 @@ def build_app_from_args(arg_str: Optional[str] = None) -> Flask:
 
 def main() -> None:
     app = build_app_from_args()
-    app.run(debug=True)
+    app.run()
 
 
 if __name__ == '__main__':
