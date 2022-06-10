@@ -13,8 +13,8 @@ pipclean:
 	rm -f requirements.txt dev-requirements.txt
 
 # Create the virtual environment
-.PHONY: install
-install:
+.PHONY: build
+build:
 	python3 -m venv --upgrade-deps .venv
 	.venv/bin/python3 -m pip --cache-dir ../../.pipcache install wheel
 	.venv/bin/python3 -m pip --cache-dir ../../.pipcache install -r dev-requirements.txt

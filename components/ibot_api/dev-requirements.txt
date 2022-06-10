@@ -4,7 +4,7 @@
 #
 #    pip-compile dev-requirements.in
 #
--e file:///Users/charolastra/code/ingestbot/components/ibot_prelude
+-e file:../ibot_prelude#egg=ibot_prelude
     # via -r requirements.txt
 attrs==21.4.0
     # via pytest

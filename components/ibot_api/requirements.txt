@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements.in
 #
--e file:///Users/charolastra/code/ingestbot/components/ibot_prelude
+-e file:../ibot_prelude#egg=ibot_prelude
     # via -r requirements.in
 aws-wsgi==0.2.7
     # via -r requirements.in

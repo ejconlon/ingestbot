@@ -1,4 +1,4 @@
--e ../ibot_prelude
+-e file:../ibot_prelude#egg=ibot_prelude
 aws-wsgi
 boto3
 flask
