@@ -4,6 +4,8 @@ from argparse import ArgumentParser
 from dataclasses import dataclass
 
 from aws_cdk import App, DefaultStackSynthesizer, Stack, StackSynthesizer
+from aws_cdk.aws_apigateway import LambdaRestApi
+from aws_cdk.aws_ec2 import Vpc
 from aws_cdk.aws_lambda import Code, Function, Runtime
 
 
@@ -56,13 +58,27 @@ def build_app(ctx: Context) -> App:
     app = App()
     synth = build_synth(ctx)
     stack = Stack(app, qualify_title(ctx, 'stack'), synthesizer=synth)
+    vpc = Vpc(
+        stack,
+        qualify_title(ctx, 'vpc'),
+        vpc_name=qualify_dash(ctx, 'vpc'),
+        max_azs=1,
+        nat_gateways=None
+    )
     api_lambda = Function(
         stack,
         qualify_title(ctx, 'api-lambda'),
         function_name=qualify_dash(ctx, 'api-lambda'),
         runtime=Runtime.PYTHON_3_9,
         handler=handler('api'),
-        code=code('api')
+        code=code('api'),
+        vpc=vpc
+    )
+    api_gateway = LambdaRestApi(
+        stack,
+        qualify_title(ctx, 'api-gateway'),
+        rest_api_name=qualify_dash(ctx, 'api-gateway'),
+        handler=api_lambda
     )
     return app
 
