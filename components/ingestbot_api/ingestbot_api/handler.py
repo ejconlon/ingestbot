@@ -5,10 +5,8 @@ Flask app. Do not import this in other code unless you want that app constructed
 Your handler module/function should be `ingestbot.handler.handler`
 """
 
-from ingestbot_api.main import build_app_from_args
-
 import awsgi
-
+from ingestbot_api.main import build_app_from_args
 
 APP = build_app_from_args()
 

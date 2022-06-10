@@ -28,7 +28,7 @@ jobs:
           key: ${{ runner.os }}-venv-${{ hashFiles('components/${{ inputs.component_name }}/dev-requirements.txt') }}
       - name: Ensure venv
         working-directory: components/${{ inputs.component_name }}
-        run: test -d .venv || make venv
+        run: test -d .venv || make install
       - name: Test project
         working-directory: components/${{ inputs.component_name }}
         run: make test

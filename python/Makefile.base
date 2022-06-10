@@ -20,17 +20,17 @@ pipcompile:
 	python3 -m piptools compile dev-requirements.in
 	rm dev-requirements.in
 
-# Remove the virtual environment
-.PHONY: venvclean
-venvclean:
-	rm -rf .venv
-
 # Create the virtual environment
-.PHONY: venv
-venv:
+.PHONY: install
+install:
 	python3 -m venv --upgrade-deps .venv
 	.venv/bin/python3 -m pip --cache-dir ../../.pipcache install wheel
 	.venv/bin/python3 -m pip --cache-dir ../../.pipcache install -r dev-requirements.txt
+
+# Format - for now just sort imports
+.PHONY: format
+format:
+	.venv/bin/python3 -m isort --settings-path=../../python/setup.cfg $(COMPONENT_NAME)
 
 # Typecheck with mypy
 .PHONY: typecheck
@@ -77,5 +77,5 @@ runpackage:
 
 # Clean most generated files (+ venv)
 .PHONY: clean
-clean: venvclean
-	rm -rf .mypy_cache .pytest_cache
+clean:
+	rm -rf .venv .mypy_cache .pytest_cache

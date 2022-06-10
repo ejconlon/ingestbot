@@ -2,14 +2,12 @@
 Some useful argparse extensions
 """
 
-from enum import Enum
-from typing import Optional
-
 import argparse
 import logging
 import os
 import shlex
-
+from enum import Enum
+from typing import Optional
 
 DEFAULT_LOG_LEVEL = 'INFO'
 DEFAULT_LOG_FORMAT = '%(asctime)s %(levelname)s %(filename)s:%(lineno)d -- %(message)s'

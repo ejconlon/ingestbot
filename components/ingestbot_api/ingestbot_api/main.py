@@ -5,10 +5,11 @@ If you want to deploy on ELB/ECS, use gunicorn with another entrypoint.
 """
 
 from argparse import ArgumentParser
+from typing import Optional
+
 from flask import Flask
 from ingestbot_api.app import build_app
 from ingestbot_api.parser import parse_args_and_configure, parser_with_profile
-from typing import Optional
 
 
 def build_parser() -> ArgumentParser:

@@ -1,0 +1,14 @@
+[
+  {
+    "ParameterKey":"Qualifier",
+    "ParameterValue":"ibot-dev"
+  },
+  {
+    "ParameterKey":"FileAssetsBucketName",
+    "ParameterValue":"ibot-dev-assets"
+  },
+  {
+    "ParameterKey":"ContainerAssetsRepositoryName",
+    "ParameterValue":"ibot-dev-containers"
+  }
+]
