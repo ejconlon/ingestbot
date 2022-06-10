@@ -6,6 +6,6 @@ include ../../python/Makefile.base
 # Freeze dependencies specified in requirements files
 .PHONY: pipcompile
 pipcompile:
-	cp ../../python/dev-requirements.lib.in ./dev-requirements.in
+	sed -e"s/__COMPONENT_NAME__/$(COMPONENT_NAME)/g" ../../python/dev-requirements.lib.in.tpl > dev-requirements.in
 	python3 -m piptools compile dev-requirements.in
 	rm dev-requirements.in
