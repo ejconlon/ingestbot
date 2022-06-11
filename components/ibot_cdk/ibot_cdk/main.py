@@ -38,7 +38,7 @@ def code(name: str) -> Code:
 
 
 def handler(name: str) -> str:
-    return f'ibot_{name}.handler'
+    return f'ibot_{name}.handler.handler'
 
 
 def build_synth(ctx: Context) -> StackSynthesizer:
@@ -86,7 +86,7 @@ def build_app(ctx: Context) -> App:
 
 def build_parser() -> ArgumentParser:
     parser = CustomArgumentParser(prog='ibot_cdk')
-    parser.add_argument('--env', metavar='IBOT_ENV', default='dev')
+    parser.add_argument('--env', metavar='IBOT_ENV', required=True)
     return parser
 
 

@@ -27,7 +27,7 @@ package:
 	cd ../../.build && cp -r ../components/$(COMPONENT_NAME)/$(COMPONENT_NAME) $(COMPONENT_NAME)
 	cd ../../.build && sed -e"s/__COMPONENT_NAME__/$(COMPONENT_NAME)/g" ../python/entrypoint.sh.tpl > $(COMPONENT_NAME)/entrypoint.sh
 	cd ../../.build && chmod +x $(COMPONENT_NAME)/entrypoint.sh
-	cd ../../.build && zip -rq $(COMPONENT_NAME).zip $(COMPONENT_NAME)
+	cd ../../.build/$(COMPONENT_NAME) && zip -rq ../$(COMPONENT_NAME).zip .
 	cd ../../.build && unzip -l $(COMPONENT_NAME).zip
 
 # Run the packaged application

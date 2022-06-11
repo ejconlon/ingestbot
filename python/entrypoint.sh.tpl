@@ -2,7 +2,7 @@
 
 # Entrypoint for the packaged application. Example:
 #
-#     unzip __COMPONENT_NAME__.zip
+#     unzip __COMPONENT_NAME__.zip -d __COMPONENT_NAME__
 #     __COMPONENT_NAME__/entrypoint.sh --log-level debug
 
 set -eux
