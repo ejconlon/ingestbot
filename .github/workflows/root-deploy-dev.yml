@@ -5,10 +5,7 @@ on:
     branches:
     - deploy-dev
 jobs:
-  integrate:
-    uses: ./.github/workflows/sub-integrate.yml
   cdk-deploy:
-    needs: [integrate]
     uses: ./.github/workflows/sub-cdk-deploy.yml
     with:
       env: dev
