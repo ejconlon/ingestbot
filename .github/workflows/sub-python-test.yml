@@ -27,6 +27,11 @@ jobs:
         with:
           path: components/${{ inputs.component_name }}/.venv
           key: ${{ runner.os }}-venv-${{ hashFiles('components/${{ inputs.component_name }}/dev-requirements.txt') }}
+      - name: Cache mypy
+        uses: actions/cache@v3
+        with:
+          path: components/${{ inputs.component_name }}/.mypy_cache
+          key: ${{ runner.os }}-mypy-${{ hashFiles('components/${{ inputs.component_name }}/dev-requirements.txt') }}
       - name: Build project
         working-directory: components/${{ inputs.component_name }}
         run: make build
