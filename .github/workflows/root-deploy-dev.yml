@@ -6,9 +6,9 @@ on:
     - deploy-dev
 jobs:
   integrate:
-    uses: ./.github/workflows/integrate.yml
+    uses: ./.github/workflows/root-integrate.yml
   cdk-deploy:
     needs: [integrate]
-    uses: ./.github/workflows/defs/cdk-deploy.yml
+    uses: ./.github/workflows/sub-cdk-deploy.yml
     with:
       env: dev
