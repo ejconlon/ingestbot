@@ -8,5 +8,15 @@ on:
     branches:
     - master
 jobs:
-  integrate:
-    uses: ./.github/workflows/sub-integrate.yml
+  prelude-test:
+    uses: ./.github/workflows/sub-python-test.yml
+    with:
+      component_name: ibot_prelude
+  api-test:
+    uses: ./.github/workflows/sub-python-test.yml
+    with:
+      component_name: ibot_api
+  cdk-test:
+    uses: ./.github/workflows/sub-python-test.yml
+    with:
+      component_name: ibot_cdk
