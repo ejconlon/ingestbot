@@ -1,5 +1,5 @@
 # Workflow for pull requests and merges to master
-name: integrate
+name: root-integrate
 on:
   push:
     branches:
@@ -8,15 +8,5 @@ on:
     branches:
     - master
 jobs:
-  prelude-test:
-    uses: ./.github/workflows/sub-python-test.yml
-    with:
-      component_name: ibot_prelude
-  api-test:
-    uses: ./.github/workflows/sub-python-test.yml
-    with:
-      component_name: ibot_api
-  cdk-test:
-    uses: ./.github/workflows/sub-python-test.yml
-    with:
-      component_name: ibot_cdk
+  integrate:
+    uses: ./.github/workflows/sub-integrate.yml

@@ -1,4 +1,5 @@
-name: python-artifact
+# Publishes an artifact for the given python component
+name: sub-python-artifact
 on:
   workflow_call:
     inputs:

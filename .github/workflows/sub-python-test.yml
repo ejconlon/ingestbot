@@ -1,4 +1,5 @@
-name: python-test
+# Builds and tests the given python component
+name: sub-python-test
 on:
   workflow_call:
     inputs:

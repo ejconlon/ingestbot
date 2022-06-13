@@ -1,4 +1,5 @@
-name: cdk-deploy
+# Deploys to the given environment
+name: sub-cdk-deploy
 on:
   workflow_call:
     inputs:

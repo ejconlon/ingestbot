@@ -1,12 +1,12 @@
 # Workflow for deployments to the dev envrionment
-name: merge
+name: root-deploy-dev
 on:
   push:
     branches:
     - deploy-dev
 jobs:
   integrate:
-    uses: ./.github/workflows/root-integrate.yml
+    uses: ./.github/workflows/sub-integrate.yml
   cdk-deploy:
     needs: [integrate]
     uses: ./.github/workflows/sub-cdk-deploy.yml
