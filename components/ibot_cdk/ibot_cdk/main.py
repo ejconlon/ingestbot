@@ -3,20 +3,53 @@ import os.path
 from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass
 
+import boto3
 from aws_cdk import App, DefaultStackSynthesizer, Stack, StackSynthesizer
 from aws_cdk.aws_apigateway import LambdaRestApi
 from aws_cdk.aws_ec2 import Vpc
+from aws_cdk.aws_iam import AccessKey, Policy, PolicyStatement, Role, User
 from aws_cdk.aws_lambda import Code, Function, Runtime
 from ibot_prelude.parser import CustomArgumentParser
+
+
+def lookup_account_id() -> str:
+    """
+    Resolves account id with boto3
+    """
+    return boto3.client('sts').get_caller_identity().get('Account')
+
+
+@dataclass
+class Params:
+    """
+    Parameters shared with the CDK bootstrap.
+    """
+    qualifier: str
+    file_assets_bucket_name: str
+    container_assets_repository_name: str
+
+
+def load_params(env: str) -> Params:
+    with open(f'ibot_cdk/bootstrap/params-{env}.json') as f:
+        params_list = json.load(f)
+    params_kv = {x['ParameterKey']: x['ParameterValue'] for x in params_list}
+    return Params(
+        qualifier=params_kv['Qualifier'],
+        file_assets_bucket_name=params_kv['FileAssetsBucketName'],
+        container_assets_repository_name=params_kv['ContainerAssetsRepositoryName']
+    )
 
 
 @dataclass
 class Context:
     """
-    Parameters here control the names and content of generated resources.
-    For now, we support named environments for multi-tenancy in the same account.
+    Attributes here control the names and content of generated resources.
+    We support named environments for multi-tenancy in the same account.
     """
     env: str
+    region: str
+    account_id: str
+    params: Params
 
 
 # Several name-generating functions follow. CloudFormation demands TitleCase
@@ -56,6 +89,13 @@ def handler(name: str) -> str:
     return f'ibot_{name}.handler.handler'
 
 
+def cdk_deploy_role_name(ctx: Context) -> str:
+    """
+    Returns the bootstrapped deploy role name
+    """
+    return f'cdk-{ctx.params.qualifier}-deploy-role-{ctx.account_id}-{ctx.region}'
+
+
 def build_synth(ctx: Context) -> StackSynthesizer:
     """
     Constructs a stack synthesizer from our custom parameters (per-env).
@@ -63,15 +103,12 @@ def build_synth(ctx: Context) -> StackSynthesizer:
     custom bucket/repo names as well as custom asset prefixes.
     CDK requires that you build a synthesizer per stack, but each one will basically be identical.
     """
-    with open(f'ibot_cdk/bootstrap/params-{ctx.env}.json') as f:
-        params_list = json.load(f)
-    params_kv = {x['ParameterKey']: x['ParameterValue'] for x in params_list}
     cdk_prefix = 'cdk'
     return DefaultStackSynthesizer(
-        qualifier=params_kv.get('Qualifier'),
-        file_assets_bucket_name=params_kv.get('FileAssetsBucketName'),
+        qualifier=ctx.params.qualifier,
+        file_assets_bucket_name=ctx.params.file_assets_bucket_name,
         bucket_prefix=f'{cdk_prefix}/',
-        image_assets_repository_name=params_kv.get('ContainerAssetsRepositoryName'),
+        image_assets_repository_name=ctx.params.container_assets_repository_name,
         docker_tag_prefix=f'{cdk_prefix}-',
     )
 
@@ -90,6 +127,7 @@ def build_app(ctx: Context) -> App:
     On the command line you will `cdk synth` and `cdk deploy` one or more sub-stacks at a time.
     """
     app = App()
+
     # VPC Stack
     vpc_stack = build_stack(ctx, app, 'vpc')
     vpc = Vpc(
@@ -99,6 +137,37 @@ def build_app(ctx: Context) -> App:
         max_azs=1,
         nat_gateways=None
     )
+
+    # CI Stack
+    ci_stack = build_stack(ctx, app, 'ci')
+    ci_role = Role.from_role_name(
+        ci_stack,
+        qualify_title(ctx, 'ci-role'),
+        role_name=cdk_deploy_role_name(ctx)
+    )
+    ci_policy = Policy(
+        ci_stack,
+        qualify_title(ctx, 'ci-policy'),
+        policy_name=qualify_dash(ctx, 'ci-policy'),
+        statements=[
+            PolicyStatement(
+                actions=["sts:AssumeRole"],
+                resources=[ci_role.role_arn]
+            )
+        ]
+    )
+    ci_user = User(
+        ci_stack,
+        qualify_title(ctx, 'ci-user'),
+        user_name=qualify_dash(ctx, 'ci-user')
+    )
+    ci_user.attach_inline_policy(ci_policy)
+    ci_key = AccessKey(
+        ci_stack,
+        qualify_title(ctx, 'ci-key'),
+        user=ci_user
+    )
+
     # API Stack
     api_stack = build_stack(ctx, app, 'api')
     api_lambda = Function(
@@ -128,6 +197,7 @@ def build_parser() -> ArgumentParser:
     """
     parser = CustomArgumentParser(prog='ibot_cdk')
     parser.add_argument('--env', metavar='IBOT_ENV', required=True)
+    parser.add_argument('--region', metavar='AWS_REGION', required=True)
     return parser
 
 
@@ -135,7 +205,14 @@ def build_context(args: Namespace) -> Context:
     """
     Builds a context from args.
     """
-    return Context(env=args.env)
+    account_id = lookup_account_id()
+    params = load_params(args.env)
+    return Context(
+        env=args.env,
+        region=args.region,
+        account_id=account_id,
+        params=params
+    )
 
 
 def main():
