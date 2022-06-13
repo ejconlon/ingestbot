@@ -9,6 +9,7 @@ on:
 jobs:
   # Deploy with CDK
   deploy:
+    environment: ${{ inputs.env }}
     runs-on: ubuntu-latest
     container:
       image: python:3.9.13
@@ -23,8 +24,8 @@ jobs:
       - name: Cache venv
         uses: actions/cache@v3
         with:
-          path: components/${{ inputs.component_name }}/.venv
-          key: ${{ runner.os }}-venv-${{ hashFiles('components/${{ inputs.component_name }}/dev-requirements.txt') }}
+          path: components/ibot_cdk/.venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('components/ibot_cdk/dev-requirements.txt') }}
       - name: Build cdk component
         working-directory: components/ibot_cdk
         run: make build

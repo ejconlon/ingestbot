@@ -9,6 +9,7 @@ from aws_cdk.aws_apigateway import LambdaRestApi
 from aws_cdk.aws_ec2 import Vpc
 from aws_cdk.aws_iam import AccessKey, Policy, PolicyStatement, Role, User
 from aws_cdk.aws_lambda import Code, Function, Runtime
+from aws_cdk.aws_secretsmanager import Secret
 from ibot_prelude.parser import CustomArgumentParser
 
 
@@ -156,16 +157,25 @@ def build_app(ctx: Context) -> App:
             )
         ]
     )
+    ci_user_name = qualify_dash(ctx, 'ci-user')
     ci_user = User(
         ci_stack,
         qualify_title(ctx, 'ci-user'),
-        user_name=qualify_dash(ctx, 'ci-user')
+        user_name=ci_user_name
     )
     ci_user.attach_inline_policy(ci_policy)
     ci_key = AccessKey(
         ci_stack,
         qualify_title(ctx, 'ci-key'),
         user=ci_user
+    )
+    ci_secret_description = f'Secret access key for {ci_user_name} access key {ci_key.access_key_id}'
+    ci_secret = Secret(
+        ci_stack,
+        qualify_title(ctx, 'ci-secret'),
+        secret_name=qualify_dash(ctx, 'ci-secret'),
+        description=ci_secret_description,
+        secret_string_value=ci_key.secret_access_key
     )
 
     # API Stack
