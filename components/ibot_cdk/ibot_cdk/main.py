@@ -1,6 +1,6 @@
 import json
 import os.path
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass
 
 from aws_cdk import App, DefaultStackSynthesizer, Stack, StackSynthesizer
@@ -12,7 +12,16 @@ from ibot_prelude.parser import CustomArgumentParser
 
 @dataclass
 class Context:
+    """
+    Parameters here control the names and content of generated resources.
+    For now, we support named environments for multi-tenancy in the same account.
+    """
     env: str
+
+
+# Several name-generating functions follow. CloudFormation demands TitleCase
+# for its resource names, but we use dash-case for other purposes.
+# Generally, everything will be prefixed with `IbotDev` or `ibot-dev` for the `dev` env.
 
 
 def title(dashed: str) -> str:
@@ -32,16 +41,28 @@ def qualify_title(ctx: Context, name: str) -> str:
 
 
 def code(name: str) -> Code:
+    """
+    Returns a reference to the built artifact of the given component name.
+    """
     rel_path = f'../../.build/ibot_{name}.zip'
     path = os.path.abspath(rel_path)
     return Code.from_asset(path)
 
 
 def handler(name: str) -> str:
+    """
+    Returns the default lambda handler name for the given component.
+    """
     return f'ibot_{name}.handler.handler'
 
 
 def build_synth(ctx: Context) -> StackSynthesizer:
+    """
+    Constructs a stack synthesizer from our custom parameters (per-env).
+    This allows us to share configuration with the bootstrap template and define
+    custom bucket/repo names as well as custom asset prefixes.
+    CDK requires that you build a synthesizer per stack, but each one will basically be identical.
+    """
     with open(f'ibot_cdk/bootstrap/params-{ctx.env}.json') as f:
         params_list = json.load(f)
     params_kv = {x['ParameterKey']: x['ParameterValue'] for x in params_list}
@@ -55,19 +76,33 @@ def build_synth(ctx: Context) -> StackSynthesizer:
     )
 
 
-def build_app(ctx: Context) -> App:
-    app = App()
+def build_stack(ctx: Context, app: App, name: str) -> Stack:
+    """
+    Smart constructor for a stack with our custom synthesizer and naming scheme.
+    """
     synth = build_synth(ctx)
-    stack = Stack(app, qualify_title(ctx, 'stack'), synthesizer=synth)
+    return Stack(app, qualify_title(ctx, f'{name}-stack'), synthesizer=synth)
+
+
+def build_app(ctx: Context) -> App:
+    """
+    Builds our multi-stack App.
+    On the command line you will `cdk synth` and `cdk deploy` one or more sub-stacks at a time.
+    """
+    app = App()
+    # VPC Stack
+    vpc_stack = build_stack(ctx, app, 'vpc')
     vpc = Vpc(
-        stack,
+        vpc_stack,
         qualify_title(ctx, 'vpc'),
         vpc_name=qualify_dash(ctx, 'vpc'),
         max_azs=1,
         nat_gateways=None
     )
+    # API Stack
+    api_stack = build_stack(ctx, app, 'api')
     api_lambda = Function(
-        stack,
+        api_stack,
         qualify_title(ctx, 'api-lambda'),
         function_name=qualify_dash(ctx, 'api-lambda'),
         runtime=Runtime.PYTHON_3_9,
@@ -76,7 +111,7 @@ def build_app(ctx: Context) -> App:
         vpc=vpc
     )
     api_gateway = LambdaRestApi(
-        stack,
+        api_stack,
         qualify_title(ctx, 'api-gateway'),
         rest_api_name=qualify_dash(ctx, 'api-gateway'),
         handler=api_lambda
@@ -85,15 +120,31 @@ def build_app(ctx: Context) -> App:
 
 
 def build_parser() -> ArgumentParser:
+    """
+    Builds an `ArgumentParser` that contains enough information to put together a `Context`.
+    Note that the `CustomArgumentParser` we use supports assigning arguments through
+    environment variables named the same as the `metavar` attribute, so one would assign
+    `IBOT_ENV` like this: `$ IBOT_ENV=dev cdk synth`
+    """
     parser = CustomArgumentParser(prog='ibot_cdk')
     parser.add_argument('--env', metavar='IBOT_ENV', required=True)
     return parser
 
 
+def build_context(args: Namespace) -> Context:
+    """
+    Builds a context from args.
+    """
+    return Context(env=args.env)
+
+
 def main():
+    """
+    Parses arguments and synthesizes CF for our parameterized application.
+    """
     parser = build_parser()
     args = parser.parse_args()
-    ctx = Context(env=args.env)
+    ctx = build_context(args)
     app = build_app(ctx)
     app.synth()
 
