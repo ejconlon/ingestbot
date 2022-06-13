@@ -1,17 +1,15 @@
-name: python
+name: cdk-deploy
 on:
   workflow_call:
     inputs:
-      component_name:
+      env:
         type: string
         required: true
 jobs:
-  # Test the project
-  test:
+  # Deploy with CDK
+  deploy:
     runs-on: ubuntu-latest
     container:
-      # Use latest release in the 3.9 series (max supported by AWS lambda)
-      # NOTE: Cannot use template vars here
       image: python:3.9.13
     steps:
       - name: Checkout
@@ -24,11 +22,9 @@ jobs:
       - name: Cache venv
         uses: actions/cache@v3
         with:
-          path: components/${{ inputs.component_name }}.venv
+          path: components/${{ inputs.component_name }}/.venv
           key: ${{ runner.os }}-venv-${{ hashFiles('components/${{ inputs.component_name }}/dev-requirements.txt') }}
-      - name: Build project
-        working-directory: components/${{ inputs.component_name }}
+      - name: Build cdk component
+        working-directory: components/ibot_cdk
         run: make build
-      - name: Test project
-        working-directory: components/${{ inputs.component_name }}
-        run: make test
+      # TODO add CDK invocation

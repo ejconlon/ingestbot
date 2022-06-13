@@ -1,0 +1,22 @@
+# Workflow for pull requests and merges to master
+name: integrate
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+jobs:
+  prelude-test:
+    uses: ./.github/workflows/defs/python-test.yml
+    with:
+      component_name: ibot_prelude
+  api-test:
+    uses: ./.github/workflows/defs/python-test.yml
+    with:
+      component_name: ibot_api
+  cdk-test:
+    uses: ./.github/workflows/defs/python-test.yml
+    with:
+      component_name: ibot_cdk

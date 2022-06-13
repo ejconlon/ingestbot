@@ -1,0 +1,34 @@
+name: python-test
+on:
+  workflow_call:
+    inputs:
+      component_name:
+        type: string
+        required: true
+jobs:
+  # Test the project
+  test:
+    runs-on: ubuntu-latest
+    container:
+      # Use latest release in the 3.9 series (max supported by AWS lambda)
+      # NOTE: Cannot use template vars here
+      image: python:3.9.13
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cache pipcache
+        uses: actions/cache@v3
+        with:
+          path: .pipcache
+          key: ${{ runner.os }}-pipcache
+      - name: Cache venv
+        uses: actions/cache@v3
+        with:
+          path: components/${{ inputs.component_name }}/.venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('components/${{ inputs.component_name }}/dev-requirements.txt') }}
+      - name: Build project
+        working-directory: components/${{ inputs.component_name }}
+        run: make build
+      - name: Test project
+        working-directory: components/${{ inputs.component_name }}
+        run: make test
