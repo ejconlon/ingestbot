@@ -23,7 +23,7 @@ The `python` directory contains language support files for the Python components
 
 ## Deployment
 
-This project uses CDK to manage deployments and supports multi-tenancy through an "environment" parameter. Work in the `components/ibot_cdk` directory when invoking `cdk`. You may need to prepend the following commands with `AWS_REGION=... AWS_PROFILE=...` or ensure that you have the relevant settings already present in your shell or AWS config.
+This project uses CDK to manage deployments and supports multi-tenancy through an "environment" parameter. Work in the `components/ibot_cdk` directory when invoking `cdk`. You may need to prepend the following commands with `AWS_REGION=... AWS_PROFILE=...` or ensure that you have the relevant settings already present in your shell. (In particular, `AWS_REGION` is necessary in the environment.)
 
 To start deploying, you'll want to bootstrap your environment. You can do that for the `dev` environment with
 
