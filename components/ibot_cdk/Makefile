@@ -1,5 +1,5 @@
 COMPONENT_NAME=ibot_cdk
-include ../../python/Makefile.app
+include ../../support/python/Makefile.app
 
 # Package the application
 .PHONY: package

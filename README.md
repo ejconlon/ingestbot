@@ -19,7 +19,7 @@ It is not expected that any two components share dependency graphs. In fact, the
 
 For Python components `make build` will ensure a `venv` is created and kept up-to-date. `make test` runs several automated checks. `make package` assembles a zip file in the top level `.build` directory with an entrypoint shell script inside. Please be careful unzipping this file, as there is no single top-level folder (this is to get around AWS Lambda working-directory restrictions).
 
-The `python` directory contains language support files for the Python components. Note that the `Makefiles` in the component directories define the component name and include the appropriate `Makefile.app` or `Makefile.lib` from the language support directory.
+The `support/python` directory contains language support files for the Python components. Note that the `Makefiles` in the component directories define the component name and include the appropriate `Makefile.app` or `Makefile.lib` from the language support directory.
 
 ## Deployment
 

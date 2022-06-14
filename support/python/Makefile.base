@@ -22,7 +22,7 @@ build:
 # Format - for now just sort imports
 .PHONY: format
 format:
-	.venv/bin/python3 -m isort --settings-path=../../python/setup.cfg $(COMPONENT_NAME)
+	.venv/bin/python3 -m isort --settings-path=../../support/python/setup.cfg $(COMPONENT_NAME)
 
 # Typecheck with mypy
 .PHONY: typecheck
@@ -32,7 +32,7 @@ typecheck:
 # Lint with flake8
 .PHONY: lint
 lint:
-	.venv/bin/python3 -m flake8 --config=../../python/setup.cfg $(COMPONENT_NAME)
+	.venv/bin/python3 -m flake8 --config=../../support/python/setup.cfg $(COMPONENT_NAME)
 
 # Unit test with pytest
 .PHONY: unit

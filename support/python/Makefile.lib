@@ -1,11 +1,11 @@
 # Targets for python libraries. Define COMPONENT_NAME and include this file.
 # See `Makefile.base` for more documentation.
 
-include ../../python/Makefile.base
+include ../../support/python/Makefile.base
 
 # Freeze dependencies specified in requirements files
 .PHONY: pipcompile
 pipcompile:
-	sed -e"s/__COMPONENT_NAME__/$(COMPONENT_NAME)/g" ../../python/dev-requirements.lib.in.tpl > dev-requirements.in
+	sed -e"s/__COMPONENT_NAME__/$(COMPONENT_NAME)/g" ../../support/python/dev-requirements.lib.in.tpl > dev-requirements.in
 	python3 -m piptools compile dev-requirements.in
 	rm dev-requirements.in

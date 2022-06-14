@@ -1,13 +1,13 @@
 # Targets for python applications. Define COMPONENT_NAME and include this file.
 # See `Makefile.base` for more documentation.
 
-include ../../python/Makefile.base
+include ../../support/python/Makefile.base
 
 # Freeze dependencies specified in requirements files
 .PHONY: pipcompile
 pipcompile:
 	python3 -m piptools compile requirements.in
-	cp ../../python/dev-requirements.app.in ./dev-requirements.in
+	cp ../../support/python/dev-requirements.app.in ./dev-requirements.in
 	python3 -m piptools compile dev-requirements.in
 	rm dev-requirements.in
 
@@ -29,7 +29,7 @@ pippackage:
 # Default implementation of app packaging
 .PHONY: package-default
 package-default: pippackage
-	cd ../../.build && sed -e"s/__COMPONENT_NAME__/$(COMPONENT_NAME)/g" ../python/entrypoint.sh.tpl > $(COMPONENT_NAME)/entrypoint.sh
+	cd ../../.build && sed -e"s/__COMPONENT_NAME__/$(COMPONENT_NAME)/g" ../support/python/entrypoint.sh.tpl > $(COMPONENT_NAME)/entrypoint.sh
 	cd ../../.build && chmod +x $(COMPONENT_NAME)/entrypoint.sh
 	cd ../../.build/$(COMPONENT_NAME) && zip -rq ../$(COMPONENT_NAME).zip .
 	cd ../../.build && unzip -l $(COMPONENT_NAME).zip
