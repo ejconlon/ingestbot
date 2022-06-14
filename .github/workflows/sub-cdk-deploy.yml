@@ -47,6 +47,9 @@ jobs:
       - name: Extract cdk code
         run: unzip ibot_cdk.zip -d ibot_cdk
         working-directory: .build
+      - name: Debug cdk
+        run: pwd && ls -lash .
+        working-directory: .build/ibot_cdk
       - name: Deploy api
         run: bash -c 'source ../../scripts/source_deploy.sh && ibot_assume_deploy_role ${{ inputs.env }} ci && ./entrypoint.sh deploy -e Ibot${{ inputs.env_title }}ApiStack'
         working-directory: .build/ibot_cdk
