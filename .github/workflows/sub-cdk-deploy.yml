@@ -17,9 +17,15 @@ jobs:
     container:
       image: python:3.9.13
     steps:
-      # Need node + unzip + cdk
+      # Need node + unzip + cdk + awscli
       - name: Install utils
-        run: apt-get update && apt-get install -y nodejs npm unzip && npm install -g aws-cdk
+        run: |
+          apt-get update
+          apt-get install -y awscli curl unzip
+          curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+          apt-get update
+          apt-get install -y nodejs npm
+          npm install -g aws-cdk
       - name: Checkout
         uses: actions/checkout@v3
       - name: Create directories
@@ -44,3 +50,5 @@ jobs:
       - name: Deploy api
         run: bash -c 'source ../../scripts/source_deploy.sh && ibot_assume_deploy_role ${{ inputs.env }} ci && ./entrypoint.sh deploy -e Ibot${{ inputs.env_title }}ApiStack'
         working-directory: .build/ibot_cdk
+        env:
+          IBOT_ENV: ${{ inputs.env }}
