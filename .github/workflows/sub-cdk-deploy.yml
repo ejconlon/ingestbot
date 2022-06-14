@@ -6,6 +6,9 @@ on:
       env:
         type: string
         required: true
+      env_title:
+        type: string
+        required: true
 jobs:
   # Deploy with CDK
   deploy:
@@ -14,19 +17,26 @@ jobs:
     container:
       image: python:3.9.13
     steps:
+      # Need node + unzip + cdk
+      - name: Install utils
+        run: apt-get update && apt-get install -y nodejs unzip && npm install -g aws-cdk
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Cache pipcache
-        uses: actions/cache@v3
+      - name: Create build dir
+        run: mkdir -p .build
+      - name: Download cdk artifact
+        uses: actions/download-artifact@v3
         with:
-          path: .pipcache
-          key: ${{ runner.os }}-pipcache
-      - name: Cache venv
-        uses: actions/cache@v3
+          name: ibot_cdk.zip
+          path: .build/ibot_cdk.zip
+      - name: Download api artifact
+        uses: actions/download-artifact@v3
         with:
-          path: components/ibot_cdk/.venv
-          key: ${{ runner.os }}-venv-${{ hashFiles('components/ibot_cdk/dev-requirements.txt') }}
-      - name: Build cdk component
-        working-directory: components/ibot_cdk
-        run: make build
-      # TODO add CDK invocation
+          name: ibot_api.zip
+          path: .build/ibot_api.zip
+      - name: Extract cdk code
+        run: unzip ibot_cdk.zip -d ibot_cdk
+        working-directory: .build
+      - name: Deploy api
+        run: source ../../scripts/source_deploy.sh && ibot_assume_deploy_role ${{ inputs.env }} ci && ./entrypoint.sh deploy -e Ibot${{ inputs.env_title }}ApiStack
+        working-directory: .build/ibot_cdk
