@@ -30,4 +30,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ inputs.component_name }}.zip
-          path: python/.build/${{ inputs.component_name }}.zip
+          path: .build/${{ inputs.component_name }}.zip
