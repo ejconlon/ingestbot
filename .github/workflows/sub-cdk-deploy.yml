@@ -34,7 +34,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: ibot_api_artifact
-          path: .artifacts/ibot_api_artifac
+          path: .artifacts/ibot_api_artifact
       - name: Move artifacts
         run: mv ../.artifacts/ibot_cdk_artifact/ibot_cdk.zip . && mv ../.artifacts/ibot_api_artifact/ibot_api.zip .
         working-directory: .build
