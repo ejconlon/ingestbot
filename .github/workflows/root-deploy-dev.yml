@@ -5,7 +5,16 @@ on:
     branches:
     - deploy-dev
 jobs:
+  cdk-artifact:
+    uses: ./.github/workflows/sub-python-artifact.yml
+    with:
+      component_name: cdk
+  api-artifact:
+    uses: ./.github/workflows/sub-python-artifact.yml
+    with:
+      component_name: api
   cdk-deploy:
+    needs: [cdk-artifact, api-artifact]
     uses: ./.github/workflows/sub-cdk-deploy.yml
     with:
       env: dev

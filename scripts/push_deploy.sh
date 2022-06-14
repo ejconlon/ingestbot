@@ -10,8 +10,8 @@ ENVIRONMENT="$1"
 shift
 
 if [[ "${ENVIRONMENT}" != "dev" ]]; then
-    echo "Supported environments: dev"
-    exit 1
+  echo "Supported environments: dev"
+  exit 1
 fi
 
 DEPLOY_BRANCH="deploy-${ENVIRONMENT}"

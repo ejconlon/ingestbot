@@ -17,14 +17,18 @@ pipcompile:
 run:
 	.venv/bin/python3 -m $(COMPONENT_NAME).main
 
-# Package the application
-.PHONY: package
-package:
+# Pip install for app packaging
+.PHONY: pippackage
+pippackage:
 	mkdir -p ../../.build
 	cd ../../.build && rm -rf $(COMPONENT_NAME).zip requirements.$(COMPONENT_NAME).txt $(COMPONENT_NAME)
 	cd ../../.build && sed -e"s/-e //g" ../components/$(COMPONENT_NAME)/requirements.txt > requirements.$(COMPONENT_NAME).txt
 	python3 -m pip --cache-dir ../../.pipcache install -t ../../.build/$(COMPONENT_NAME) -r ../../.build/requirements.$(COMPONENT_NAME).txt
 	cd ../../.build && cp -r ../components/$(COMPONENT_NAME)/$(COMPONENT_NAME) $(COMPONENT_NAME)
+
+# Default implementation of app packaging
+.PHONY: package-default
+package-default: pippackage
 	cd ../../.build && sed -e"s/__COMPONENT_NAME__/$(COMPONENT_NAME)/g" ../python/entrypoint.sh.tpl > $(COMPONENT_NAME)/entrypoint.sh
 	cd ../../.build && chmod +x $(COMPONENT_NAME)/entrypoint.sh
 	cd ../../.build/$(COMPONENT_NAME) && zip -rq ../$(COMPONENT_NAME).zip .
