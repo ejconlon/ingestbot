@@ -22,20 +22,24 @@ jobs:
         run: apt-get update && apt-get install -y nodejs npm unzip && npm install -g aws-cdk
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Create build dir
-        run: mkdir -p .build
+      - name: Create directories
+        run: mkdir -p .artifacts .build
+      # Github "helpfully" adds unnecessary structure to artifacts so there's some work to be done
       - name: Download cdk artifact
         uses: actions/download-artifact@v3
         with:
-          name: ibot_cdk.zip
-          path: .build/ibot_cdk.zip
+          name: ibot_cdk_artifact
+          path: .artifacts/ibot_cdk_artifact
       - name: Download api artifact
         uses: actions/download-artifact@v3
         with:
-          name: ibot_api.zip
-          path: .build/ibot_api.zip
+          name: ibot_api_artifact
+          path: .artifacts/ibot_api_artifac
+      - name: Move artifacts
+        run: mv ../.artifacts/ibot_cdk_artifact/ibot_cdk.zip . && mv ../.artifacts/ibot_api_artifact/ibot_api.zip .
+        working-directory: .build
       - name: Extract cdk code
-        run: pwd && ls -lash . && unzip ibot_cdk.zip -d ibot_cdk
+        run: unzip ibot_cdk.zip -d ibot_cdk
         working-directory: .build
       - name: Deploy api
         run: source ../../scripts/source_deploy.sh && ibot_assume_deploy_role ${{ inputs.env }} ci && ./entrypoint.sh deploy -e Ibot${{ inputs.env_title }}ApiStack

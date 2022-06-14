@@ -29,5 +29,5 @@ jobs:
       - name: Upload package artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ inputs.component_name }}.zip
+          name: ${{ inputs.component_name }}_artifact
           path: .build/${{ inputs.component_name }}.zip
