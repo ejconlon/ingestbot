@@ -22,7 +22,7 @@ jobs:
         run: |
           apt-get update
           apt-get install -y awscli curl unzip
-          curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+          curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
           apt-get update
           apt-get install -y nodejs npm
           npm install -g aws-cdk
