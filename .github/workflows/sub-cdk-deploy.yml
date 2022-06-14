@@ -24,7 +24,7 @@ jobs:
           apt-get install -y awscli curl unzip
           curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
           apt-get update
-          apt-get install -y nodejs npm
+          apt-get install -y nodejs
           npm install -g aws-cdk
       - name: Checkout
         uses: actions/checkout@v3
