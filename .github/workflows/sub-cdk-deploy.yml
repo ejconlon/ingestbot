@@ -19,7 +19,7 @@ jobs:
     steps:
       # Need node + unzip + cdk
       - name: Install utils
-        run: apt-get update && apt-get install -y nodejs unzip && npm install -g aws-cdk
+        run: apt-get update && apt-get install -y nodejs npm unzip && npm install -g aws-cdk
       - name: Checkout
         uses: actions/checkout@v3
       - name: Create build dir
