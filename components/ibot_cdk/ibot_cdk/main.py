@@ -70,10 +70,6 @@ def qualify_dash(ctx: Context, name: str) -> str:
     return f'{prefix_dash(ctx)}-{name}'
 
 
-def qualify_title(ctx: Context, name: str) -> str:
-    return title(qualify_dash(ctx, name))
-
-
 def code(name: str) -> Code:
     """
     Returns a reference to the built artifact of the given component name.
@@ -120,7 +116,7 @@ def build_stack(ctx: Context, app: App, name: str) -> Stack:
     Smart constructor for a stack with our custom synthesizer and naming scheme.
     """
     synth = build_synth(ctx)
-    return Stack(app, qualify_title(ctx, f'{name}-stack'), synthesizer=synth)
+    return Stack(app, title(f'{name}-stack'), synthesizer=synth)
 
 
 def build_app(ctx: Context) -> App:
@@ -134,7 +130,7 @@ def build_app(ctx: Context) -> App:
     vpc_stack = build_stack(ctx, app, 'vpc')
     vpc = Vpc(
         vpc_stack,
-        qualify_title(ctx, 'vpc'),
+        title('vpc'),
         vpc_name=qualify_dash(ctx, 'vpc'),
         max_azs=1,
         nat_gateways=None
@@ -144,22 +140,22 @@ def build_app(ctx: Context) -> App:
     ci_stack = build_stack(ctx, app, 'ci')
     ci_deploy_role = Role.from_role_name(
         ci_stack,
-        qualify_title(ctx, 'ci-deploy-role'),
+        title('ci-deploy-role'),
         role_name=cdk_role_name(ctx, 'deploy')
     )
     ci_file_role = Role.from_role_name(
         ci_stack,
-        qualify_title(ctx, 'ci-file-role'),
+        title('ci-file-role'),
         role_name=cdk_role_name(ctx, 'file-publishing')
     )
     ci_lookup_role = Role.from_role_name(
         ci_stack,
-        qualify_title(ctx, 'ci-lookup-role'),
+        title('ci-lookup-role'),
         role_name=cdk_role_name(ctx, 'lookup')
     )
     ci_policy = Policy(
         ci_stack,
-        qualify_title(ctx, 'ci-policy'),
+        title('ci-policy'),
         policy_name=qualify_dash(ctx, 'ci-policy'),
         statements=[
             PolicyStatement(
@@ -175,19 +171,19 @@ def build_app(ctx: Context) -> App:
     ci_user_name = qualify_dash(ctx, 'ci-user')
     ci_user = User(
         ci_stack,
-        qualify_title(ctx, 'ci-user'),
+        title('ci-user'),
         user_name=ci_user_name
     )
     ci_user.attach_inline_policy(ci_policy)
     ci_key = AccessKey(
         ci_stack,
-        qualify_title(ctx, 'ci-key'),
+        title('ci-key'),
         user=ci_user
     )
     ci_secret_description = f'Secret access key for {ci_user_name} access key {ci_key.access_key_id}'
     ci_secret = Secret(
         ci_stack,
-        qualify_title(ctx, 'ci-secret'),
+        title('ci-secret'),
         secret_name=qualify_dash(ctx, 'ci-secret'),
         description=ci_secret_description,
         secret_string_value=ci_key.secret_access_key
@@ -197,7 +193,7 @@ def build_app(ctx: Context) -> App:
     api_stack = build_stack(ctx, app, 'api')
     api_lambda = Function(
         api_stack,
-        qualify_title(ctx, 'api-lambda'),
+        title('api-lambda'),
         function_name=qualify_dash(ctx, 'api-lambda'),
         runtime=Runtime.PYTHON_3_9,
         handler=handler('api'),
@@ -206,7 +202,7 @@ def build_app(ctx: Context) -> App:
     )
     api_gateway = LambdaRestApi(
         api_stack,
-        qualify_title(ctx, 'api-gateway'),
+        title('api-gateway'),
         rest_api_name=qualify_dash(ctx, 'api-gateway'),
         handler=api_lambda
     )

@@ -6,9 +6,6 @@ on:
       env:
         type: string
         required: true
-      env_title:
-        type: string
-        required: true
 jobs:
   # Deploy with CDK
   deploy:
@@ -42,7 +39,7 @@ jobs:
         run: unzip ibot_cdk.zip -d ibot_cdk
         working-directory: .build
       - name: Deploy api
-        run: ./entrypoint.sh deploy -e Ibot${{ inputs.env_title }}ApiStack
+        run: ./entrypoint.sh deploy -e ApiStack
         working-directory: .build/ibot_cdk
         env:
           IBOT_ENV: ${{ inputs.env }}
