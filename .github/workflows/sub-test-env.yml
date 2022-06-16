@@ -8,7 +8,7 @@ on:
         required: true
 jobs:
   test:
-    environment: ${{ inputs.env }}
+    environment: test
     runs-on: ubuntu-latest
     steps:
       - name: Test env
