@@ -6,11 +6,6 @@ on:
       env:
         type: string
         required: true
-    secrets:
-      TEST_VAR:
-        required: true
-      GLOBAL_VAR:
-        required: true
 jobs:
   test:
     environment: test
@@ -21,9 +16,3 @@ jobs:
         env:
           TEST_VAR: ${{ secrets.TEST_VAR }}
           GLOBAL_VAR: ${{ secrets.GLOBAL_VAR }}
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-      - name: Cat env
-        run: cat /home/runner/work/_temp/_runner_file_commands/set_env_*
