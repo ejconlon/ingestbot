@@ -16,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Install utils
-        run: pip3 install --upgrade pip setuptools wheel
+        run: apt-get update && apt-get install -y unzip zip && pip3 install --upgrade pip setuptools wheel
       - name: Cache pipcache
         uses: actions/cache@v3
         with:
