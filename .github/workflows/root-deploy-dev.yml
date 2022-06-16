@@ -5,16 +5,16 @@ on:
     branches:
     - deploy-dev
 jobs:
-  cdk-artifact:
-    uses: ./.github/workflows/sub-python-artifact.yml
-    with:
-      component_name: ibot_cdk
-  api-artifact:
-    uses: ./.github/workflows/sub-python-artifact.yml
-    with:
-      component_name: ibot_api
+  # cdk-artifact:
+  #   uses: ./.github/workflows/sub-python-artifact.yml
+  #   with:
+  #     component_name: ibot_cdk
+  # api-artifact:
+  #   uses: ./.github/workflows/sub-python-artifact.yml
+  #   with:
+  #     component_name: ibot_api
   cdk-deploy:
-    needs: [cdk-artifact, api-artifact]
+    # needs: [cdk-artifact, api-artifact]
     uses: ./.github/workflows/sub-cdk-deploy.yml
     with:
       env: dev

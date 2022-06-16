@@ -44,7 +44,7 @@ jobs:
         run: pwd && ls -lash .
         working-directory: .build/ibot_cdk
       - name: Deploy api
-        run: bash -c 'source ../../scripts/source_deploy.sh && ibot_assume_deploy_role ${{ inputs.env }} ci && ./entrypoint.sh deploy -e Ibot${{ inputs.env_title }}ApiStack'
+        run: bash -c 'source ../../scripts/source_deploy.sh && ibot_assume_deploy_role ${{ inputs.env }} ci && aws sts get-caller-identity && ./entrypoint.sh deploy -e Ibot${{ inputs.env_title }}ApiStack'
         working-directory: .build/ibot_cdk
         env:
           IBOT_ENV: ${{ inputs.env }}
