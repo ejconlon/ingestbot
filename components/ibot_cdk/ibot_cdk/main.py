@@ -230,7 +230,8 @@ def main():
     """
     Parses arguments and synthesizes CF for our parameterized application.
     """
-    print(os.environ.keys())
+    for key in os.environ.keys():
+        print(key)
     parser = build_parser()
     args = parser.parse_args()
     ctx = build_context(args)
