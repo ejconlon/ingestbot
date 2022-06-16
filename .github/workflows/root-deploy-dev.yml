@@ -19,3 +19,4 @@ jobs:
     with:
       env: dev
       env_title: Dev
+    secrets: inherit
