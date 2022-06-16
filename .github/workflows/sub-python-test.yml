@@ -15,10 +15,10 @@ jobs:
       # NOTE: Cannot use template vars here
       image: python:3.9.13
     steps:
-      - name: Install utils
-        run: pip3 install --upgrade pip
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Install utils
+        run: pip3 install --upgrade pip setuptools wheel
       - name: Cache pipcache
         uses: actions/cache@v3
         with:

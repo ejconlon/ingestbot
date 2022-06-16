@@ -17,17 +17,10 @@ jobs:
     container:
       image: python:3.9.13
     steps:
-      # Need node + unzip + cdk + awscli
-      - name: Install utils
-        run: |
-          apt-get update
-          apt-get install -y awscli curl unzip
-          curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
-          apt-get update
-          apt-get install -y nodejs
-          npm install -g aws-cdk
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Install utils
+        run: /bin/bash support/docker/setup.sh
       - name: Create directories
         run: mkdir -p .artifacts .build
       # Github "helpfully" adds unnecessary structure to artifacts so there's some work to be done
