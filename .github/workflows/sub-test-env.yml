@@ -16,3 +16,7 @@ jobs:
         env:
           TEST_VAR: ${{ secrets.TEST_VAR }}
           GLOBAL_VAR: ${{ secrets.GLOBAL_VAR }}
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
