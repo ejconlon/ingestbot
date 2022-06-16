@@ -20,3 +20,5 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
+      - name: Cat env
+        run: cat /home/runner/work/_temp/_runner_file_commands/set_env_*
