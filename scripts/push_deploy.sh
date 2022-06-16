@@ -2,7 +2,7 @@
 
 # Trigger a deploy by pushing to the deploy branch
 # Note that this tags the current origin master, so pull and compare before deploying.
-# Use: ./ops/push_deploy.sh [dev]
+# Use: ./scripts/push_deploy.sh [dev]
 
 set -eux
 
