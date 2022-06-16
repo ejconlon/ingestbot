@@ -19,4 +19,5 @@ jobs:
     with:
       env: dev
       env_title: Dev
+    # NOTE: inheriting secrets is the only way to make env secrets work with reusable workflows.
     secrets: inherit

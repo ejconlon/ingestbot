@@ -12,7 +12,8 @@ on:
 jobs:
   # Deploy with CDK
   deploy:
-    environment: dev
+    # Pull our AWS_* secrets from env secrets instead of repo secrets
+    environment: ${{ inputs.env }}
     runs-on: ubuntu-latest
     container:
       image: python:3.9.13
@@ -40,11 +41,8 @@ jobs:
       - name: Extract cdk code
         run: unzip ibot_cdk.zip -d ibot_cdk
         working-directory: .build
-      - name: Debug cdk
-        run: pwd && ls -lash .
-        working-directory: .build/ibot_cdk
       - name: Deploy api
-        run: aws sts get-caller-identity && ./entrypoint.sh deploy -e Ibot${{ inputs.env_title }}ApiStack
+        run: ./entrypoint.sh deploy -e Ibot${{ inputs.env_title }}ApiStack
         working-directory: .build/ibot_cdk
         env:
           IBOT_ENV: ${{ inputs.env }}
