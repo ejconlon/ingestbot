@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Test env
-        run: echo "Test var <${TEST_VAR}>"
+        run: echo "Test var <${TEST_VAR}> - global var <${GLOBAL_VAR}>"
         env:
           TEST_VAR: ${{ secrets.TEST_VAR }}
+          GLOBAL_VAR: ${{ secrets.GLOBAL_VAR }}
