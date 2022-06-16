@@ -37,7 +37,24 @@ To resolve the `aws-cdk-lib` dependency, you must invoke `make build` to ensure 
 
 CDK will report that several stacks are present; simply pass the name of any one of them or `\*` to select them all:
 
-    IBOT_ENV=dev cdk synth IbotDevVpcStack
+    IBOT_ENV=dev cdk synth VpcStack
     IBOT_ENV=dev cdk synth \*
 
 Use `cdk deploy` instead to create/update the resources, or `cdk destroy` to delete them.
+
+## CI
+
+This repo is setup to use Github Actions for CI. The workflows are in `.github/workflows` - those with the `root-` prefix are triggered on branch pushes and those with the `sub-` prefix are reusable workflows triggered by those roots.
+
+The `root-integrate` workflow is run on every pull request and every merge to `master`. It basically runs `make build test` in each component subdirectory.
+
+You can use `./scripts/push_deploy.sh dev` to trigger a CI deployment workflow (`root-deploy-dev`) through a push to the `deploy-dev` branch. Note that in this repository setup there is an environment with the appropriate AWS credentials to make this happen (specifically, `AWS_{REGION,ACCESS_KEY_ID,SECRET_ACCESS_KEY}`). The access key id and secret were obtained by first manually creating the CI user:
+
+    IBOT_ENV=dev cdk deploy CiStack
+
+Then querying Secrets Manager for the key from the description and the secret from the value:
+
+    aws secretsmanager list-secrets
+    aws secretsmanager get-secret-value --secret-id ibot-dev-ci-secret
+
+(You would have to do this for each new environment you configured.)
