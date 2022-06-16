@@ -16,6 +16,12 @@ function ibot_assume_deploy_role() {
   fi
 
   ACCOUNT_ID="$(aws sts get-caller-identity --query 'Account' --output text)"
+
+  if [[ -z "${ACCOUNT_ID}" ]]; then
+    echo "Could not resolve account id - check credentials"
+    return 1
+  fi
+
   ROLE_NAME="cdk-ibot-${ENVIRONMENT}-deploy-role-${ACCOUNT_ID}-${AWS_REGION}"
   ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/${ROLE_NAME}"
   OUTPUT="$(aws sts assume-role --role-arn ${ROLE_ARN} --role-session-name ${SESSION_NAME} --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text)"
