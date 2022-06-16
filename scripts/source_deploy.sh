@@ -3,6 +3,8 @@
 # Assume the deploy role in this shell.
 # NOTE: Must have AWS_REGION in environment.
 function ibot_assume_deploy_role() {
+  set -eu
+
   ENVIRONMENT="$1"
   SESSION_NAME="$2"
   shift
@@ -22,6 +24,8 @@ function ibot_assume_deploy_role() {
 }
 
 function ibot_clear_creds() {
+  set -eu
+
   unset AWS_ACCESS_KEY_ID
   unset AWS_SECRET_ACCESS_KEY
   unset AWS_SESSION_TOKEN
