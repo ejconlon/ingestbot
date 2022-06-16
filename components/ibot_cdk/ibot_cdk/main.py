@@ -1,5 +1,4 @@
 import json
-import os
 import os.path
 from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass
@@ -91,11 +90,12 @@ def handler(name: str) -> str:
     return f'ibot_{name}.handler.handler'
 
 
-def cdk_deploy_role_name(ctx: Context) -> str:
+def cdk_role_name(ctx: Context, aspect: str) -> str:
     """
-    Returns the bootstrapped deploy role name
+    Returns the bootstrapped role name.
+    Aspect should be one of {deploy, file-publishing, lookup}
     """
-    return f'cdk-{ctx.params.qualifier}-deploy-role-{ctx.account_id}-{ctx.region}'
+    return f'cdk-{ctx.params.qualifier}-{aspect}-role-{ctx.account_id}-{ctx.region}'
 
 
 def build_synth(ctx: Context) -> StackSynthesizer:
@@ -142,10 +142,20 @@ def build_app(ctx: Context) -> App:
 
     # CI Stack
     ci_stack = build_stack(ctx, app, 'ci')
-    ci_role = Role.from_role_name(
+    ci_deploy_role = Role.from_role_name(
         ci_stack,
-        qualify_title(ctx, 'ci-role'),
-        role_name=cdk_deploy_role_name(ctx)
+        qualify_title(ctx, 'ci-deploy-role'),
+        role_name=cdk_role_name(ctx, 'deploy')
+    )
+    ci_file_role = Role.from_role_name(
+        ci_stack,
+        qualify_title(ctx, 'ci-file-role'),
+        role_name=cdk_role_name(ctx, 'file-publishing')
+    )
+    ci_lookup_role = Role.from_role_name(
+        ci_stack,
+        qualify_title(ctx, 'ci-lookup-role'),
+        role_name=cdk_role_name(ctx, 'lookup')
     )
     ci_policy = Policy(
         ci_stack,
@@ -154,7 +164,11 @@ def build_app(ctx: Context) -> App:
         statements=[
             PolicyStatement(
                 actions=["sts:AssumeRole"],
-                resources=[ci_role.role_arn]
+                resources=[
+                    ci_deploy_role.role_arn,
+                    ci_file_role.role_arn,
+                    ci_lookup_role.role_arn,
+                ]
             )
         ]
     )
@@ -230,8 +244,6 @@ def main():
     """
     Parses arguments and synthesizes CF for our parameterized application.
     """
-    for key in os.environ.keys():
-        print(key)
     parser = build_parser()
     args = parser.parse_args()
     ctx = build_context(args)
