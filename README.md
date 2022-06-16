@@ -21,6 +21,8 @@ For Python components `make build` will ensure a `venv` is created and kept up-t
 
 The `support/python` directory contains language support files for the Python components. Note that the `Makefiles` in the component directories define the component name and include the appropriate `Makefile.app` or `Makefile.lib` from the language support directory.
 
+There is a `Dockerfile` in `support/docker` that will give you a complete build environment, but it is not necessary to use this. `./scripts/image_build.sh` will build and tag `ibot-build`.
+
 ## Deployment
 
 This project uses CDK to manage deployments and supports multi-tenancy through an "environment" parameter. Work in the `components/ibot_cdk` directory when invoking `cdk`. You may need to prepend the following commands with `AWS_REGION=... AWS_PROFILE=...` or ensure that you have the relevant settings already present in your shell. (In particular, `AWS_REGION` is necessary in the environment.)
