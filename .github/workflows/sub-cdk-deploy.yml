@@ -12,7 +12,7 @@ on:
 jobs:
   # Deploy with CDK
   deploy:
-    environment: ${{ inputs.env }}
+    environment: dev
     runs-on: ubuntu-latest
     container:
       image: python:3.9.13
