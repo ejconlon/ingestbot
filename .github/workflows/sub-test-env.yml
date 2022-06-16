@@ -6,9 +6,14 @@ on:
       env:
         type: string
         required: true
+    secrets:
+      TEST_VAR:
+        required: true
+      GLOBAL_VAR:
+        required: true
 jobs:
   test:
-    # environment: test
+    environment: test
     runs-on: ubuntu-latest
     steps:
       - name: Test env
