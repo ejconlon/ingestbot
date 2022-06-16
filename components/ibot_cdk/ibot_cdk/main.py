@@ -1,4 +1,5 @@
 import json
+import os
 import os.path
 from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass
@@ -229,6 +230,7 @@ def main():
     """
     Parses arguments and synthesizes CF for our parameterized application.
     """
+    print(os.environ.keys())
     parser = build_parser()
     args = parser.parse_args()
     ctx = build_context(args)
