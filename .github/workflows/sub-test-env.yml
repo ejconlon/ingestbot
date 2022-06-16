@@ -12,6 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Test env
-        run: echo "${TEST_VAR}"
+        run: echo "Test var <${TEST_VAR}>"
         env:
           TEST_VAR: ${{ secrets.TEST_VAR }}
