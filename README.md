@@ -46,13 +46,17 @@ Use `cdk deploy` instead to create/update the resources, or `cdk destroy` to del
 
 ## CI
 
-This repo is setup to use Github Actions for CI. The workflows are in `.github/workflows` - those with the `root-` prefix are triggered on branch pushes and those with the `sub-` prefix are reusable workflows triggered by those roots.
+This repo is setup to use either Github Actions or AWS CodePipeline for CI.
+
+### Using Github Actions
+
+The workflows are in `.github/workflows` - those with the `root-` prefix are triggered on branch pushes and those with the `sub-` prefix are reusable workflows triggered by those roots.
 
 The `root-integrate` workflow is run on every pull request and every merge to `master`. It basically runs `make build test` in each component subdirectory.
 
-You can use `./scripts/push_deploy.sh dev` to trigger a CI deployment workflow (`root-deploy-dev`) through a push to the `deploy-dev` branch. Note that in this repository setup there is an environment with the appropriate AWS credentials to make this happen (specifically, `AWS_{REGION,ACCESS_KEY_ID,SECRET_ACCESS_KEY}`). The access key id and secret were obtained by first manually creating the CI user:
+You can use `./scripts/push_deploy.sh gh dev` to trigger a CI deployment workflow (`root-deploy-dev`) through a push to the `deploy-gh-dev` branch. Note that in this repository setup there is an environment with the appropriate AWS credentials to make this happen (specifically, `AWS_{REGION,ACCESS_KEY_ID,SECRET_ACCESS_KEY}`). The access key id and secret were obtained by first manually creating the CI user:
 
-    IBOT_ENV=dev cdk deploy CiStack
+    IBOT_ENV=dev cdk deploy -e CiStack
 
 Then querying Secrets Manager for the key from the description and the secret from the value:
 
@@ -60,3 +64,19 @@ Then querying Secrets Manager for the key from the description and the secret fr
     aws secretsmanager get-secret-value --secret-id ibot-dev-ci-secret
 
 (You would have to do this for each new environment you configured.)
+
+### Using AWS CodePipeline
+
+You will need to generate a Github Access Token with the `repo` and `admin:repo_hook` scopes and put it in Secrets Manager for CodePipeline to be able to read the repo. You can bring up the secret with:
+
+  IBOT_ENV=dev cdk deploy -e RepoStack
+
+Then you can set the secret - in this example it's in the `GITHUB_TOKEN` env var:
+
+  aws secretsmanager put-secret-value --secret-id ibot-dev-repo-secret --secret-string ${GITHUB_TOKEN}
+
+Now you can bring up the CodePipeline stack:
+
+  IBOT_ENV=dev cdk deploy -e RepoStack PipelineStack
+
+You can trigger a deployment with `./scripts/push_deploy.sh aws dev`.

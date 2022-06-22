@@ -6,9 +6,13 @@ from dataclasses import dataclass
 import boto3
 from aws_cdk import App, DefaultStackSynthesizer, Stack, StackSynthesizer
 from aws_cdk.aws_apigateway import LambdaRestApi
+from aws_cdk.aws_codebuild import Project, BuildEnvironment, BuildSpec, LinuxBuildImage
+from aws_cdk.aws_codepipeline import Artifact, Pipeline
+from aws_cdk.aws_codepipeline_actions import CodeBuildAction, GitHubSourceAction
 from aws_cdk.aws_ec2 import Vpc
 from aws_cdk.aws_iam import AccessKey, Policy, PolicyStatement, Role, User
 from aws_cdk.aws_lambda import Code, Function, Runtime
+from aws_cdk.aws_s3 import Bucket
 from aws_cdk.aws_secretsmanager import Secret
 from ibot_prelude.parser import CustomArgumentParser
 
@@ -58,6 +62,8 @@ class Context:
 # Generally, everything will be prefixed with `IbotDev` or `ibot-dev` for the `dev` env.
 
 
+# TODO(ejconlon) Confirm that prefixing CF names is not required for multitenancy.
+# If it is, then add it here with `qualify_dash`.
 def title(dashed: str) -> str:
     return dashed.title().replace('-', '')
 
@@ -126,7 +132,7 @@ def build_app(ctx: Context) -> App:
     """
     app = App()
 
-    # VPC Stack
+    # VPC Stack - base VPC resources
     vpc_stack = build_stack(ctx, app, 'vpc')
     vpc = Vpc(
         vpc_stack,
@@ -136,7 +142,7 @@ def build_app(ctx: Context) -> App:
         nat_gateways=None
     )
 
-    # CI Stack
+    # CI Stack - Resources for CI: user, access key, role permissions
     ci_stack = build_stack(ctx, app, 'ci')
     ci_deploy_role = Role.from_role_name(
         ci_stack,
@@ -189,7 +195,77 @@ def build_app(ctx: Context) -> App:
         secret_string_value=ci_key.secret_access_key
     )
 
-    # API Stack
+    # Repo Stack - secret for Github repo access
+    repo_stack = build_stack(ctx, app, 'repo')
+    repo_secret = Secret(
+        repo_stack,
+        title('repo-secret'),
+        secret_name=qualify_dash(ctx, 'repo-secret'),
+        description='Github Access Token with repo and admin:repo_hook scopes'
+    )
+
+    # Pipeline Stack - AWS CodePipeline resources
+    # See https://docs.aws.amazon.com/cdk/api/v2/python/aws_cdk.aws_codepipeline_actions/README.html#github
+    pl_stack = build_stack(ctx, app, 'pipeline')
+    pl_artifact_bucket = Bucket.from_bucket_name(
+        pl_stack,
+        title('file-assets-bucket'),
+        bucket_name=ctx.params.file_assets_bucket_name
+    )
+    pl_deploy_pipeline = Pipeline(
+        pl_stack,
+        title('deploy-pipeline'),
+        pipeline_name=qualify_dash(ctx, 'deploy-pipeline'),
+        artifact_bucket=pl_artifact_bucket,
+    )
+    pl_source_output = Artifact(artifact_name=qualify_dash(ctx, 'source-output'))
+    pl_source_action = GitHubSourceAction(
+        action_name=qualify_dash(ctx, 'source-action'),
+        owner='ejconlon',
+        repo='ingestbot',
+        oauth_token=repo_secret.secret_value,
+        output=pl_source_output,
+        branch=f'deploy-aws-{ctx.env}'
+    )
+    pl_build_project = Project(
+        pl_stack,
+        title('build-project'),
+        environment=BuildEnvironment(
+            build_image=LinuxBuildImage.from_docker_registry('python:3.9.13')
+        ),
+        build_spec=BuildSpec.from_object({
+            "version": "0.2",
+            "phases": {
+                "install": {
+                    "commands": [
+                        "echo installing"
+                    ]
+                },
+                "build": {
+                    "commands": [
+                        "echo building"
+                    ]
+                }
+            },
+            "artifacts": {
+            }
+        })
+    )
+    pl_build_action = CodeBuildAction(
+        action_name=qualify_dash(ctx, 'build-action'),
+        project=pl_build_project,
+        input=pl_source_output,
+    )
+    pl_deploy_pipeline.add_stage(
+        stage_name='Source',
+        actions=[pl_source_action]
+    )
+    pl_deploy_pipeline.add_stage(
+        stage_name='Build',
+        actions=[pl_build_action]
+    )
+
+    # API Stack - resources to serve the web app
     api_stack = build_stack(ctx, app, 'api')
     api_lambda = Function(
         api_stack,
