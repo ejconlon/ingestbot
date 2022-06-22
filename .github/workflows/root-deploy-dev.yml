@@ -3,7 +3,7 @@ name: root-deploy-dev
 on:
   push:
     branches:
-    - deploy-dev
+    - deploy-gh-dev
 jobs:
   cdk-artifact:
     uses: ./.github/workflows/sub-python-artifact.yml
