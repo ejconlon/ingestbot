@@ -9,7 +9,7 @@ from aws_cdk.aws_apigateway import LambdaRestApi
 from aws_cdk.aws_codebuild import Project, BuildEnvironment, BuildSpec, LinuxBuildImage
 from aws_cdk.aws_codepipeline import Artifact, Pipeline
 from aws_cdk.aws_codepipeline_actions import CodeBuildAction, GitHubSourceAction
-from aws_cdk.aws_ec2 import Vpc
+from aws_cdk.aws_ec2 import SubnetConfiguration, SubnetType, Vpc
 from aws_cdk.aws_iam import AccessKey, Policy, PolicyStatement, Role, User
 from aws_cdk.aws_lambda import Code, Function, Runtime
 from aws_cdk.aws_s3 import Bucket
@@ -139,7 +139,15 @@ def build_app(ctx: Context) -> App:
         title('vpc'),
         vpc_name=qualify_dash(ctx, 'vpc'),
         max_azs=1,
-        nat_gateways=None
+        # Just allocate one public subnet and no NAT gateways
+        nat_gateways=None,
+        nat_gateway_provider=None,
+        subnet_configuration=[
+            SubnetConfiguration(
+                name='public',
+                subnet_type=SubnetType.PUBLIC
+            )
+        ]
     )
 
     # CI Stack - Resources for CI: user, access key, role permissions
@@ -227,6 +235,7 @@ def build_app(ctx: Context) -> App:
         output=pl_source_output,
         branch=f'deploy-aws-{ctx.env}'
     )
+    # See https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html
     pl_build_project = Project(
         pl_stack,
         title('build-project'),
@@ -274,7 +283,10 @@ def build_app(ctx: Context) -> App:
         runtime=Runtime.PYTHON_3_9,
         handler=handler('api'),
         code=code('api'),
-        vpc=vpc
+        vpc=vpc,
+        # Confirm that we don't need to access the internet
+        # Otherwise we need a NAT gateway in our VPC
+        allow_public_subnet=True
     )
     api_gateway = LambdaRestApi(
         api_stack,
